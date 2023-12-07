@@ -27,9 +27,15 @@ int main(int argc, char* argv[]) {
 
 			rewind(fp);
 
-			fgets(srcContent, size, fp);
+			char srcTemp[65535];
 
-			printf(srcContent);
+			while (fgets(srcTemp, size, fp)) {
+				strcat(srcContent, srcTemp);
+				printf("%s", srcTemp);
+			}
+
+			printf("\n\nFULL STRING:\n");
+			printf("%s", srcContent);
 
 			fclose(fp);
 		}
