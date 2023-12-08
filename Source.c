@@ -3,6 +3,14 @@
 
 // cl Source.c /Fe:blargify.exe
 
+char* substring(int pos, int len, char* string) {
+	char* res = (char*)malloc(len * sizeof(char));
+
+	strncpy(res, string + (pos - 1), len);
+
+	return res;
+}
+
 int main(int argc, char* argv[]) {
 	if (argc > 1) {
 		char* filename = argv[1];
@@ -23,8 +31,7 @@ int main(int argc, char* argv[]) {
 			// Get size of file to allocate a large enough string
 			int size = ftell(fp); 
 
-			char* srcContent;
-			srcContent = (char*) malloc(size * sizeof(char));
+			char* srcContent = (char*) malloc(size * sizeof(char));
 
 			// Move pointer back to beginning of file
 			rewind(fp); 
@@ -41,6 +48,7 @@ int main(int argc, char* argv[]) {
 
 			printf("FILE AS STRING:\n");
 			printf("%s\n\n", srcContent);
+			printf(substring(0,4,srcContent));
 
 			// Close file
 			fclose(fp);
