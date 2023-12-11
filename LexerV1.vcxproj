@@ -127,10 +127,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source.c" />
+    <ClCompile Include="src\Lexer.c" />
+    <ClCompile Include="src\Source.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="HelloWorld.blarg" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Lexer.h" />
+    <ClInclude Include="src\Token.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
