@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
 
@@ -17,15 +18,13 @@ char* readfile(char* filename) {
 		fseek(fp, 0, SEEK_SET);
 
 		// Reserve memory for file string
-		char* srcBuffer = (char*) malloc((length) * sizeof(char));printf("WHY");
+		char* srcBuffer = (char*) malloc((length) * sizeof(char));
 
 		// Read file into srcBuffer, append EOF indicator
 		fread(srcBuffer, 1, length, fp);
 		srcBuffer[length] = '\0';
 
 		fclose(fp);
-
-		printf(srcBuffer);
 
 		return srcBuffer;
 	}
@@ -41,7 +40,7 @@ int main(int argc, char* argv[]) {
 		char* filename = argv[1];
 
 		// Check if file ends in .blarg
-		int dot = strrchr(filename, '.');
+		char* dot = strrchr(filename, '.');
 		if (dot == NULL || strcmp(dot, ".blarg") != 0) {
 			printf("File '%s' is not a .blarg file.", filename);
 			exit(-1);
@@ -49,10 +48,11 @@ int main(int argc, char* argv[]) {
 
 		char* buffer = readfile(filename);
 
-		printf(buffer);
-
 		for (int i = 0; i < strlen(buffer); i++) {
 			printf("%c\n", buffer[i]);
+			if (buffer[i] == "!"[0]) {
+				printf("AAA");
+			}
 		}
 	}
 	else {
