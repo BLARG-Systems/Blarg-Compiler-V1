@@ -1,7 +1,19 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 
 // cl Source.c /Fe:blargify.exe
+
+long strindexof(char* source, char* key, long i) {
+	// TODO: Implement start index searching with i
+	char* found = strstr(source, key);
+
+	if (found) {
+		return (long) found - source;
+	} else {
+		return -1;
+	}
+}
 
 int main(int argc, char* argv[]) {
 	if (argc > 1) {
@@ -23,7 +35,7 @@ int main(int argc, char* argv[]) {
 			long length = ftell(fp); 
   			fseek (f, 0, SEEK_SET);
 
-			char* srcBuffer = (char*) malloc(size * sizeof(char));
+			char* srcBuffer = malloc(size * sizeof(char));
 
 			fread (buffer, 1, length, f);
 			
@@ -31,6 +43,8 @@ int main(int argc, char* argv[]) {
 
 			printf("FILE AS STRING:\n");
 			printf("%s\n\n", srcBuffer);
+
+			prinf(strindexof(srcBuffer, ":)", 0));
 		}
 		else { // File does not exist or cannot be read from
 			printf("Unable to access BLARG! source file '%s'", filename);
