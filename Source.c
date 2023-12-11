@@ -3,14 +3,6 @@
 
 // cl Source.c /Fe:blargify.exe
 
-char* substring(int pos, int len, char* string) {
-	char* res = (char*)malloc(len * sizeof(char));
-
-	strncpy(res, string + (pos - 1), len);
-
-	return res;
-}
-
 int main(int argc, char* argv[]) {
 	if (argc > 1) {
 		char* filename = argv[1];
@@ -26,32 +18,19 @@ int main(int argc, char* argv[]) {
 		FILE* fp = fopen(filename, "r");
 
 		if (fp != NULL) { // File exists and is readable
+			// Go to end of file, read length, then return to beginning of file
 			fseek(fp, 0L, SEEK_END);
+			long length = ftell(fp); 
+  			fseek (f, 0, SEEK_SET);
 
-			// Get size of file to allocate a large enough string
-			int size = ftell(fp); 
+			char* srcBuffer = (char*) malloc(size * sizeof(char));
 
-			char* srcContent = (char*) malloc(size * sizeof(char));
-
-			// Move pointer back to beginning of file
-			rewind(fp); 
-
-			char srcTemp[65535];
-
-			// Loop Through all lines in file, store to srcContent
-			while (fgets(srcTemp, size, fp)) {
-				// TODO: Optimize memory usage while reading lines
-
-				strcat(srcContent, srcTemp);
-				//printf("%s", srcTemp);
-			}
+			fread (buffer, 1, length, f);
+			
+  			fclose (f);
 
 			printf("FILE AS STRING:\n");
-			printf("%s\n\n", srcContent);
-			printf(substring(0,4,srcContent));
-
-			// Close file
-			fclose(fp);
+			printf("%s\n\n", srcBuffer);
 		}
 		else { // File does not exist or cannot be read from
 			printf("Unable to access BLARG! source file '%s'", filename);
