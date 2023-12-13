@@ -1,9 +1,13 @@
+#include "Lexer.h"
+#include "Token.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
 
 // cl src\Source.c /Fe:blargify.exe
+
+int filelen;
 
 char* readfile(char* filename) {
 	// Get file and verify access
@@ -14,15 +18,15 @@ char* readfile(char* filename) {
 
 		// Go to end of file, read length, then return to beginning of file
 		fseek(fp, 0L, SEEK_END);
-		long length = ftell(fp);
+		filelen = ftell(fp);
 		fseek(fp, 0, SEEK_SET);
 
 		// Reserve memory for file string
-		char* srcBuffer = (char*) malloc((length) * sizeof(char));
+		char* srcBuffer = (char*) malloc((filelen) * sizeof(char));
 
 		// Read file into srcBuffer, append EOF indicator
-		fread(srcBuffer, 1, length, fp);
-		srcBuffer[length] = '\0';
+		fread(srcBuffer, 1, filelen, fp);
+		srcBuffer[filelen] = '\0';
 
 		fclose(fp);
 
@@ -48,12 +52,12 @@ int main(int argc, char* argv[]) {
 
 		char* buffer = readfile(filename);
 
-		for (int i = 0; i < strlen(buffer); i++) {
-			printf("%c\n", buffer[i]);
-			if (buffer[i] == "!"[0]) {
-				printf("AAA");
-			}
-		}
+		Lexer lexer;
+		lexer.source = buffer;
+		lexer.source_len = filelen;
+		lexer.tokens = (Token*)malloc((filelen) * sizeof(Token));
+
+		Lex(lexer);
 	}
 	else {
 		printf("No file argument supplied.");

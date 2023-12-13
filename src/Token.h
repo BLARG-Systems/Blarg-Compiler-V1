@@ -1,10 +1,11 @@
 #ifndef BLARG_TOKEN_H
 #define BLARG_TOKEN_H
+#include <stdbool.h>
 
 
 enum TokenType {
-    TOKEN_EOF = 0,
-    TOKEN_EOS,
+    TOKEN_END_OF_FILE = 0,
+    TOKEN_IDENTIFIER,
 
     // Characters (Seperators, Operators, etc)
     TOKEN_LEFT_PARENTHESIS = 100,
@@ -19,14 +20,33 @@ enum TokenType {
     TOKEN_EQUALS,
     TOKEN_QUESTION,
     TOKEN_AMPERSAND,
-    TOKEN_CARRAT
+    TOKEN_CARRAT,
+    TOKEN_VERTICAL_BAR,
+    TOKEN_SMILE, // REPLACES ;
+    TOKEN_FROWN, // REPLACES ELSE
+
+    // Keywords
+    TOKEN_EXPECT = 200,
+    TOKEN_WHILE,
+    TOKEN_FOR,
+    TOKEN_INTEGER,
+    TOKEN_STRING,
+    TOKEN_BOOL,
+    TOKEN_FUN,
+    TOKEN_NULL,
+
+    // Value tokens
+    TOKEN_LITERAL_INT = 300,
+    TOKEN_LITERAL_STRING,
+    TOKEN_LITERAL_BOOL
+
 } typedef TokenType;
 
 struct Token {
     TokenType type;
 
     int line;
-    int src_index;
+    int line_index;
     union {
         int int_value;
         char* str_value;
