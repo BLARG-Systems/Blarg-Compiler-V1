@@ -5,8 +5,8 @@
 
 struct Lexer {
     char* source;
-    int line = 1;
-    int index = 0;
+    int line;
+    int index;
     int source_len;
     Token* tokens;
 
