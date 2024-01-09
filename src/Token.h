@@ -5,6 +5,7 @@
 
 enum TokenType {
     TOKEN_END_OF_FILE = 0,
+    TOKEN_END_OF_LINE,
     TOKEN_IDENTIFIER,
 
     // Characters (Seperators, Operators, etc)
