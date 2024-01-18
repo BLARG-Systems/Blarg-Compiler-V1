@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 static bool StrAreEqual(char* str1, char* str2) {
 	return strcmp(str1, str2) == 0;
@@ -38,8 +39,8 @@ void Lex(Lexer lexer) {
 			break;
 		} 
 
-		c = lexer.source[lexer.index];
-		if (StrAreEqual(&c, "\n")) {
+		c = &lexer.source[lexer.index];
+		if (StrAreEqual(c, "\n")) {
 			printf("plswork\n");
 			InsertToken(lexer, line, line_index, TOKEN_END_OF_LINE, &token_cnt);
 			++line;
