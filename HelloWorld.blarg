@@ -1,4 +1,5 @@
-Hello World!
-a
-a
-a
+expect CSL.blarg:)
+
+fun null main() {
+	CSL.showEnd(“Hello, World!”):)
+}
