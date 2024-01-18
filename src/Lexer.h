@@ -12,6 +12,6 @@ struct Lexer {
 } typedef Lexer;
 
 
-extern void Lex(Lexer lexer);
+extern void Lex(Lexer* lexer);
 
 #endif // BLARG_LEXER_H
