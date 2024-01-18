@@ -1,11 +1,10 @@
 #ifndef BLARG_LEXER_H
 #define BLARG_LEXER_H
-#include "Token.h"
 
+#include "Token.h"
 
 struct Lexer {
     char* source;
-    int line;
     int index;
     int source_len;
     Token* tokens;
@@ -13,6 +12,6 @@ struct Lexer {
 } typedef Lexer;
 
 
-void Lex(Lexer* lexer);
+extern void Lex(Lexer lexer);
 
 #endif // BLARG_LEXER_H

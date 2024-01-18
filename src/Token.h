@@ -1,7 +1,7 @@
 #ifndef BLARG_TOKEN_H
 #define BLARG_TOKEN_H
-#include <stdbool.h>
 
+#include <stdbool.h>
 
 enum TokenType {
     TOKEN_END_OF_FILE = 0,

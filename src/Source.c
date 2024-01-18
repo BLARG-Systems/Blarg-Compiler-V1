@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
 
 		char* buffer = readfile(filename);
 
-		Lexer lexer;
+		struct Lexer lexer;
 		lexer.source = buffer;
 		lexer.source_len = filelen;
 		lexer.tokens = (Token*)malloc((filelen) * sizeof(Token));
