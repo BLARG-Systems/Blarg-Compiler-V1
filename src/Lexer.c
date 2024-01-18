@@ -6,7 +6,7 @@
 #include <stdio.h>
 
 static bool StrAreEqual(char* str1, char* str2) {
-	return strcmp(str1, str2) == 0;
+	return strncmp(str1, str2, 1) == 0;
 }
 
 static Token MakeToken(int line, int line_index) {
@@ -31,6 +31,7 @@ void Lex(Lexer lexer) {
 	int line_index = 0;
 	char* c;
 	lexer.index = 0;
+	printf("%d", lexer.source_len);
 
 	printf("Testing\n");
 	while (true) {
@@ -40,15 +41,17 @@ void Lex(Lexer lexer) {
 		} 
 
 		c = &lexer.source[lexer.index];
-		if (StrAreEqual(c, "\n")) {
-			printf("plswork\n");
+		printf("%c\n", c[0]);
+		printf("%d\n", lexer.index);
+		if (strncmp(c, "\n", 1) == 0) {
+			//printf("Newline!");
 			InsertToken(lexer, line, line_index, TOKEN_END_OF_LINE, &token_cnt);
 			++line;
 			line_index = 0;
+			++lexer.index;
 			continue;
 		}
 
-		printf("%d\n", token_cnt);
 		++line_index;
 		++lexer.index;
 	}

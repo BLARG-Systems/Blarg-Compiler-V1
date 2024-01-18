@@ -22,7 +22,7 @@ char* readfile(char* filename) {
 		fseek(fp, 0, SEEK_SET);
 
 		// Reserve memory for file string
-		char* srcBuffer = (char*) malloc((filelen) * sizeof(char));
+		char* srcBuffer = (char*) malloc(filelen);
 
 		// Read file into srcBuffer, append EOF indicator
 		fread(srcBuffer, 1, filelen, fp);
@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
 
 		struct Lexer lexer;
 		lexer.source = buffer;
-		lexer.source_len = filelen;
+		lexer.source_len = filelen-3; // Random extra memory at end of string(?), don't delete this or the lexer will read them
 		lexer.tokens = (Token*)malloc((filelen) * sizeof(Token));
 
 		Lex(lexer);
