@@ -57,7 +57,19 @@ int main(int argc, char* argv[]) {
 		lexer.source_len = filelen-3; // Random extra memory at end of string(?), don't delete this or the lexer will read them
 		lexer.tokens = (Token*)malloc((filelen) * sizeof(Token));
 
-		Lex(lexer);
+		Lex(&lexer);
+
+		int i = 0;
+		while (true) {
+			//printf("RUNNING % i", i);
+			printf("%d\n", lexer.tokens[i].type);
+
+			if (lexer.tokens[i].type == 0) {
+				printf("Lexing complete.");
+				return;
+			}
+			++i;
+		}
 	}
 	else {
 		printf("No file argument supplied.");
