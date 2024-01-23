@@ -5,13 +5,16 @@
 
 struct Lexer {
     char* source;
-    int index;
     int source_len;
+    int index;
+    int line;
+    int line_index;
+    int token_cnt;
     Token* tokens;
 
 } typedef Lexer;
 
 
-extern void Lex(Lexer* lexer);
+extern void LexSource(Lexer* lexer);
 
 #endif // BLARG_LEXER_H
