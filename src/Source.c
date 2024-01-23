@@ -15,7 +15,6 @@ char* readfile(char* filename) {
 	
 
 	if (fp != NULL) { // File exists and is readable
-
 		// Go to end of file, read length, then return to beginning of file
 		fseek(fp, 0L, SEEK_END);
 		filelen = ftell(fp);
@@ -54,25 +53,18 @@ int main(int argc, char* argv[]) {
 
 		struct Lexer lexer;
 		lexer.source = buffer;
-		lexer.source_len = filelen - 3; // Random extra memory at end of string(?), don't delete this or the lexer will read them
+		lexer.source_len = filelen - 3; // Random extra memory at end of string(?), don't delete this or the lexer will attempt to read them
 		lexer.index = 0;
 		lexer.line = 1;
 		lexer.line_index = 0;
 		lexer.token_cnt = 0;
-		Token* tokens = (Token*)malloc((filelen) * sizeof(Token));
+		lexer.tokens = (Token*)malloc((filelen) * sizeof(Token));
 
 		LexSource(&lexer);
-
+		
 		int i = 0;
-		while (true) {
-			//printf("RUNNING % i", i);
-			printf("%d\n", lexer.tokens[i].type);
-
-			if (lexer.tokens[i].type == 0) {
-				printf("Lexing complete.");
-				break;
-			}
-			++i;
+		for (int i = 0; i < lexer.token_cnt; ++i) {
+			printf("%d | ", lexer.tokens[i].type);
 		}
 	}
 	else {
