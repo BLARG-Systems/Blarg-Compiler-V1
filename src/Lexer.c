@@ -17,44 +17,51 @@ static Token MakeToken(int line, int line_index) {
 	return this_token;
 }
 
-static void InsertToken(Lexer* lexer, int line, int line_index, TokenType type, int* token_cnt) {
-	Token t = MakeToken(line, line_index);
+static void AddToken(Lexer* lexer, TokenType type) {
+	Token t = MakeToken(lexer->line, lexer->line_index);
 	t.type = type;
 
-	lexer->tokens[*token_cnt] = t;
-	++*token_cnt;
+	lexer->tokens[lexer->token_cnt] = t;
+	++lexer->token_cnt;
 }
 
-void Lex(Lexer* lexer) {
-	int token_cnt = 0;
-	int line = 0;
-	int line_index = 0;
+static void EatToken(Lexer* lexer) {
 	char c;
-	lexer->index = 0;
-	
-	while (true) {
-		//printf("%i\n", lexer->index);
+
+	if (lexer->index == lexer->source_len) {
+		AddToken(lexer, TOKEN_END_OF_FILE);
+		return;
+	}
+
+	c = lexer->source[lexer->index];
+	//printf("%c\n", c);
+
+	switch (c) {
+		case '\n': {
+			AddToken(lexer, TOKEN_END_OF_LINE);
+			++lexer->line;
+			lexer->line_index = 0;
+			++lexer->index;
+			return;
+		}
+		case '(': {
+			AddToken(lexer, TOKEN_LEFT_PARENTHESIS);
+		}
+	}
+
+	++lexer->line_index;
+	++lexer->index;
+}
+
+void LexSource(Lexer* lexer) {
+	for (int i = 0; i < lexer->source_len+1; ++i) {
 		//printf("%i\n", lexer->source_len);
-		if (lexer->index == lexer->source_len) {
-			//printf("EOF");
-			InsertToken(lexer, line, line_index, TOKEN_END_OF_FILE, &token_cnt);
+		//printf("%i\n\n", i);
+		EatToken(lexer);
+		printf("[%i]  |  %i  ----  %i\n", lexer->index, lexer->token_cnt, lexer->tokens[lexer->token_cnt - 1].type);
+		if (lexer->token_cnt > 0 && lexer->tokens[lexer->token_cnt - 1].type == 0) {
+			printf("Lexing complete.\n\n");
 			break;
 		}
-
-		c = lexer->source[lexer->index];
-		
-		switch (c) {
-			case '\n': {
-				InsertToken(lexer, line, line_index, TOKEN_END_OF_LINE, &token_cnt);
-				++line;
-				line_index = 0;
-			}
-			case '(': {
-				InsertToken(lexer, line, line_index, TOKEN_LEFT_PARENTHESIS, &token_cnt);
-			}
-		}
-
-		++line_index;
-		++lexer->index;
 	}
 }
