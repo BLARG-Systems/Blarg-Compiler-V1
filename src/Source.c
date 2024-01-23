@@ -54,10 +54,14 @@ int main(int argc, char* argv[]) {
 
 		struct Lexer lexer;
 		lexer.source = buffer;
-		lexer.source_len = filelen-3; // Random extra memory at end of string(?), don't delete this or the lexer will read them
-		lexer.tokens = (Token*)malloc((filelen) * sizeof(Token));
+		lexer.source_len = filelen - 3; // Random extra memory at end of string(?), don't delete this or the lexer will read them
+		lexer.index = 0;
+		lexer.line = 1;
+		lexer.line_index = 0;
+		lexer.token_cnt = 0;
+		Token* tokens = (Token*)malloc((filelen) * sizeof(Token));
 
-		Lex(&lexer);
+		LexSource(&lexer);
 
 		int i = 0;
 		while (true) {
@@ -66,7 +70,7 @@ int main(int argc, char* argv[]) {
 
 			if (lexer.tokens[i].type == 0) {
 				printf("Lexing complete.");
-				return;
+				break;
 			}
 			++i;
 		}
