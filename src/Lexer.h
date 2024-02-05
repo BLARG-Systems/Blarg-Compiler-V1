@@ -15,6 +15,7 @@ struct Lexer {
 } typedef Lexer;
 
 
+// Attempt to preform complex Lexical Analysis for intense tokenization of the source stored in the lexer's source. Tokens generated in the process are dynamically appened to the appropriate memory storage container.
 extern void LexSource(Lexer* lexer);
 
 #endif // BLARG_LEXER_H
