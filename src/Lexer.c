@@ -23,7 +23,31 @@ static void AddToken(Lexer* lexer, TokenType type) {
 	++lexer->token_cnt;
 }
 
-// Returns -1 for newline, 0 if no match found, 1 if a match is found. If any match is found, a token is created and added to the token array.
+static void AddTokenStrValue(Lexer* lexer, TokenType type, char* value) {
+	Token t = MakeToken(type, lexer->line, lexer->line_index, value);
+	t.bool_value = value
+
+	lexer->tokens[lexer->token_cnt] = t;
+	++lexer->token_cnt;
+}
+
+static void AddTokenIntValue(Lexer* lexer, TokenType type, int value) {
+	Token t = MakeToken(type, lexer->line, lexer->line_index, value);
+	t.bool_value = value
+
+		lexer->tokens[lexer->token_cnt] = t;
+	++lexer->token_cnt;
+}
+
+static void AddTokenBoolValue(Lexer* lexer, TokenType type, bool value) {
+	Token t = MakeToken(type, lexer->line, lexer->line_index, value);
+	t.bool_value = value
+
+		lexer->tokens[lexer->token_cnt] = t;
+	++lexer->token_cnt;
+}
+
+// Returns -1 for newline, 0 if no match found, 1 if a match is found. If any match is found, a token is created and added to the token array. Also eats whitespace!
 static int EatChar(Lexer* lexer, char c) {
 	switch (c) { // I better never have to update this
 		case '\n': {
@@ -32,6 +56,12 @@ static int EatChar(Lexer* lexer, char c) {
 			lexer->line_index = 0;
 			++lexer->index;
 			return -1;
+		}
+		case ' ': {
+			break;
+		}
+		case '	': {
+			break;
 		}
 		case '(': {
 			AddToken(lexer, TOKEN_LEFT_PARENTHESIS);
@@ -114,9 +144,19 @@ static int EatSymbol(Lexer* lexer, char* s) {
 	return 1;
 }
 
-// Returns 0 if no match found, 1 if a match is found. If any match is found, a token is created and added to the token array.
+// Returns 0 if no match found, 1 if a match is found. If any match is found, a token is created and added to the token array, then the indexs are incremented by the keyword length.
 static int EatKeyword(Lexer* lexer, char* s) {
-
+	if (strncmp(s, "expect", 6) == 0) { AddToken(lexer, TOKEN_EXPECT); lexer->line_index += 6; lexer->index += 6; }
+	else if (strncmp(s, "while", 5) == 0) { AddToken(lexer, TOKEN_WHILE); lexer->line_index += 5; lexer->index += 5; }
+	else if (strncmp(s, "int", 3) == 0) { AddToken(lexer, TOKEN_INTEGER); lexer->line_index += 3; lexer->index += 3; }
+	else if (strncmp(s, "str", 3) == 0) { AddToken(lexer, TOKEN_STRING); lexer->line_index += 3; lexer->index += 3; }
+	else if (strncmp(s, "bool", 4) == 0) { AddToken(lexer, TOKEN_BOOL); lexer->line_index += 4; lexer->index += 4; }
+	else if (strncmp(s, "fun", 3) == 0) { AddToken(lexer, TOKEN_FUN); lexer->line_index += 3; lexer->index += 3; }
+	else if (strncmp(s, "null", 4) == 0) { AddToken(lexer, TOKEN_NULL); lexer->line_index += 4; lexer->index += 4; }
+	else if (strncmp(s, "true", 4) == 0) { AddTokenBoolValue(lexer, TOKEN_LITERAL_BOOL, true); lexer->line_index += 4; lexer->index += 4; }
+	else if (strncmp(s, "false", 5) == 0) { AddTokenBoolValue(lexer, TOKEN_LITERAL_BOOL, false); lexer->line_index += 5; lexer->index += 5; }
+	else { return 0; }
+	return 1;
 }
 
 // Attempts to parse the token at the current index, and adds a token to the token array if valid.
@@ -148,8 +188,13 @@ static void EatToken(Lexer* lexer) {
 	int ateSymbol = EatSymbol(lexer, s);
 	if (ateSymbol > 0) {
 		printf("%c%c\n", s[0], s[1]);
-		++lexer->line_index;
-		++lexer->index;
+		lexer->line_index += 2;
+		lexer->index += 2;
+		return;
+	}
+
+	int ateKeyword = EatKeyword(lexer, s);
+	if (ateKeyword > 0) {
 		return;
 	}
 
