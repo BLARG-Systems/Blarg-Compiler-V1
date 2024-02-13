@@ -1,5 +1,5 @@
 expect CSL.blarg:)
 
 fun null main() {
-	CSL.showEnd(“Hello, World!”):)
+	CSL.showEnd("Hello, World!"):)
 }

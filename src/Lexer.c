@@ -5,6 +5,14 @@
 #include <string.h>
 #include <stdio.h>
 
+static bool IsAlphabetic(char c) {
+	return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z');
+}
+
+static bool IsDigit(char c) {
+	return '0' <= c && c <= '9';
+}
+
 // Creates a token with the provided data
 static Token MakeToken(TokenType type, int line, int line_index) {
 	Token this_token;
@@ -23,27 +31,39 @@ static void AddToken(Lexer* lexer, TokenType type) {
 	++lexer->token_cnt;
 }
 
-static void AddTokenStrValue(Lexer* lexer, TokenType type, char* value) {
-	Token t = MakeToken(type, lexer->line, lexer->line_index, value);
-	t.bool_value = value
+// Creates a token with IDENTIFIER type, and adds the specified value to the token
+static void AddTokenIdentifierValue(Lexer* lexer, char* value) {
+	Token t = MakeToken(TOKEN_IDENTIFIER, lexer->line, lexer->line_index);
+	t.str_value = value;
 
 	lexer->tokens[lexer->token_cnt] = t;
 	++lexer->token_cnt;
 }
 
-static void AddTokenIntValue(Lexer* lexer, TokenType type, int value) {
-	Token t = MakeToken(type, lexer->line, lexer->line_index, value);
-	t.bool_value = value
+// Creates a token with LITERAL_STRING type, and adds the specified value to the token
+static void AddTokenStrValue(Lexer* lexer, char* value) {
+	Token t = MakeToken(TOKEN_LITERAL_STRING, lexer->line, lexer->line_index);
+	t.str_value = value;
 
-		lexer->tokens[lexer->token_cnt] = t;
+	lexer->tokens[lexer->token_cnt] = t;
 	++lexer->token_cnt;
 }
 
-static void AddTokenBoolValue(Lexer* lexer, TokenType type, bool value) {
-	Token t = MakeToken(type, lexer->line, lexer->line_index, value);
-	t.bool_value = value
+// Creates a token with LITERAL_INT type, and adds the specified value to the token
+static void AddTokenIntValue(Lexer* lexer, int value) {
+	Token t = MakeToken(TOKEN_LITERAL_INT, lexer->line, lexer->line_index);
+	t.int_value = value;
 
-		lexer->tokens[lexer->token_cnt] = t;
+	lexer->tokens[lexer->token_cnt] = t;
+	++lexer->token_cnt;
+}
+
+// Creates a token with LITERAL_BOOL type, and adds the specified value to the token
+static void AddTokenBoolValue(Lexer* lexer, bool value) {
+	Token t = MakeToken(TOKEN_LITERAL_BOOL, lexer->line, lexer->line_index);
+	t.bool_value = value;
+
+	lexer->tokens[lexer->token_cnt] = t;
 	++lexer->token_cnt;
 }
 
@@ -145,7 +165,7 @@ static int EatSymbol(Lexer* lexer, char* s) {
 }
 
 // Returns 0 if no match found, 1 if a match is found. If any match is found, a token is created and added to the token array, then the indexs are incremented by the keyword length.
-static int EatKeyword(Lexer* lexer, char* s) {
+static int EatKeyword(Lexer* lexer, char* s) { // Yes... this is possibly one of the messiest way of doing this, but that's a future problem!
 	if (strncmp(s, "expect", 6) == 0) { AddToken(lexer, TOKEN_EXPECT); lexer->line_index += 6; lexer->index += 6; }
 	else if (strncmp(s, "while", 5) == 0) { AddToken(lexer, TOKEN_WHILE); lexer->line_index += 5; lexer->index += 5; }
 	else if (strncmp(s, "int", 3) == 0) { AddToken(lexer, TOKEN_INTEGER); lexer->line_index += 3; lexer->index += 3; }
@@ -153,10 +173,130 @@ static int EatKeyword(Lexer* lexer, char* s) {
 	else if (strncmp(s, "bool", 4) == 0) { AddToken(lexer, TOKEN_BOOL); lexer->line_index += 4; lexer->index += 4; }
 	else if (strncmp(s, "fun", 3) == 0) { AddToken(lexer, TOKEN_FUN); lexer->line_index += 3; lexer->index += 3; }
 	else if (strncmp(s, "null", 4) == 0) { AddToken(lexer, TOKEN_NULL); lexer->line_index += 4; lexer->index += 4; }
-	else if (strncmp(s, "true", 4) == 0) { AddTokenBoolValue(lexer, TOKEN_LITERAL_BOOL, true); lexer->line_index += 4; lexer->index += 4; }
-	else if (strncmp(s, "false", 5) == 0) { AddTokenBoolValue(lexer, TOKEN_LITERAL_BOOL, false); lexer->line_index += 5; lexer->index += 5; }
+	else if (strncmp(s, "true", 4) == 0) { AddTokenBoolValue(lexer, true); lexer->line_index += 4; lexer->index += 4; }
+	else if (strncmp(s, "false", 5) == 0) { AddTokenBoolValue(lexer, false); lexer->line_index += 5; lexer->index += 5; }
 	else { return 0; }
 	return 1;
+}
+
+// Returns 0 if no literal found, 1 if a literal is found. Will terminate with code -1 if the literal was incomplete.
+static int EatLiteral(Lexer* lexer, char* s) {
+	char c = s[0];
+	int length = 0;
+
+	switch (c) { // Get string literal
+		case '"': {
+			for (int i = 1; i < strlen(s); ++i) {
+				++length;
+				if (s[i] == '"') {
+					char* str_value = (char*)malloc(length);
+
+					for (i = 1; i < length; ++i) {
+						str_value[i - 1] = s[i];
+					}
+
+					//printf(strcat(str_value, "\0"));
+
+					AddTokenStrValue(lexer, str_value);
+
+					lexer->line_index += length + 1;
+					lexer->index += length + 1;
+
+					return 1;
+				}
+			}
+			printf("ERROR: MISSING \" TO END STRING ON LINE %i.", lexer->line_index);
+			exit(-1);
+		}
+		case '\'': {
+			for (int i = 1; i < strlen(s); ++i) {
+				++length;
+				if (s[i] == '\'') {
+					char* str_value = (char*)malloc(length);
+
+					for (i = 1; i < length; ++i) {
+						str_value[i - 1] = s[i];
+					}
+
+					AddTokenStrValue(lexer, str_value);
+
+					lexer->line_index += length + 1;
+					lexer->index += length + 1;
+
+					return 1;
+				}
+			}
+			printf("ERROR: MISSING ' TO END STRING ON LINE %i.", lexer->line_index);
+			exit(-1);
+		}
+		case '`': {
+			for (int i = 1; i < strlen(s); ++i) {
+				++length;
+				if (s[i] == '`') {
+					char* str_value = (char*)malloc(length);
+
+					for (i = 1; i < length; ++i) {
+						str_value[i - 1] = s[i];
+					}
+
+					AddTokenStrValue(lexer, str_value);
+
+					lexer->line_index += length + 1;
+					lexer->index += length + 1;
+
+					return 1;
+				}
+			}
+			printf("ERROR: MISSING ` TO END STRING ON LINE %i.", lexer->line_index);
+			exit(-1);
+		}
+	}
+
+	if (IsDigit(c)) { // Get integer literal
+		for (int i = 1; i < strlen(s); ++i) {
+			++length;
+			if (!IsDigit(c)) {
+				char* str_value = (char*)malloc(length);
+
+				for (i = 0; i < length; ++i) {
+					str_value[i] = s[i];
+				}
+
+				char* ptr;
+				AddTokenIntValue(lexer, (int) strtol(str_value, ptr, 10);
+
+				lexer->line_index += length + 1;
+				lexer->index += length + 1;
+
+				return 1;
+			}
+		}
+		printf("ERROR: INTEGER DID NOT END.");
+		exit(-1);
+	}
+	else if (IsAlphabetic(c) || c == '_') { // Get identifier
+		for (int i = 1; i < strlen(s); ++i) {
+			++length;
+			if (!IsAlphabetic(c)) {
+				char* str_value = (char*)malloc(length);
+
+				for (i = 0; i < length; ++i) {
+					str_value[i] = s[i];
+				}
+
+				AddTokenIdentifierValue(lexer, str_value);
+
+				lexer->line_index += length + 1;
+				lexer->index += length + 1;
+
+				return 1;
+			}
+		}
+		printf("ERROR: IDENTIFIER DID NOT END.");
+		exit(-1);
+	}
+
+	return 0;
 }
 
 // Attempts to parse the token at the current index, and adds a token to the token array if valid.
@@ -166,14 +306,19 @@ static void EatToken(Lexer* lexer) {
 		return;
 	}
 
+	char* s;
+	s = &lexer->source[lexer->index];
+
+	int ateLiteral = EatLiteral(lexer, s);
+	if (ateLiteral > 0) {
+		return;
+	}
+
 	char c;
 	c = lexer->source[lexer->index];
 
-	//printf("%c",c);
 	int ateChar = EatChar(lexer, c);
-	//printf("%d\n", ateChar);
 	if (ateChar > 0) {
-		printf("%c\n", c);
 		++lexer->line_index;
 		++lexer->index;
 		return;
@@ -181,13 +326,9 @@ static void EatToken(Lexer* lexer) {
 	else if (ateChar < 0) {
 		return;
 	}
-	
-	char* s;
-	s = &lexer->source[lexer->index];
 
 	int ateSymbol = EatSymbol(lexer, s);
 	if (ateSymbol > 0) {
-		printf("%c%c\n", s[0], s[1]);
 		lexer->line_index += 2;
 		lexer->index += 2;
 		return;
@@ -205,7 +346,7 @@ static void EatToken(Lexer* lexer) {
 void LexSource(Lexer* lexer) {
 	for (int i = 0; i < lexer->source_len+1; ++i) {
 		EatToken(lexer);
-		//printf("[%i]  |  %i  ----  %i\n", lexer->index, lexer->token_cnt, lexer->tokens[lexer->token_cnt - 1].type);
+		printf("[%i]  |  %i  ----  %i\n", lexer->index, lexer->token_cnt, lexer->tokens[lexer->token_cnt - 1].type);
 		if (lexer->token_cnt > 0 && lexer->tokens[lexer->token_cnt - 1].type == 0) {
 			printf("Lexing complete.\n\n");
 			break;
