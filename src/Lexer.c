@@ -99,14 +99,6 @@ static int EatChar(Lexer* lexer, char c) {
 			AddToken(lexer, TOKEN_RIGHT_CURLYBRACE);
 			break;
 		}
-		case '\'': {
-			AddToken(lexer, TOKEN_SINGLE_QUOTE);
-			break;
-		}
-		case '"': {
-			AddToken(lexer, TOKEN_DOUBLE_QUOTE);
-			break;
-		}
 		case '*': {
 			AddToken(lexer, TOKEN_STAR);
 			break;
@@ -147,6 +139,10 @@ static int EatChar(Lexer* lexer, char c) {
 			AddToken(lexer, TOKEN_VERTICAL_BAR);
 			break;
 		}
+		case '.': {
+			AddToken(lexer, TOKEN_PERIOD);
+			break;
+		}
 		default: {
 			return 0;
 		}
@@ -160,6 +156,22 @@ static int EatSymbol(Lexer* lexer, char* s) {
 	else if (strncmp(s, ":(", 2) == 0) { AddToken(lexer, TOKEN_ELSE); }
 	else if (strncmp(s, "&&", 2) == 0) { AddToken(lexer, TOKEN_AND); }
 	else if (strncmp(s, "||", 2) == 0) { AddToken(lexer, TOKEN_OR); }
+	else if (strncmp(s, ":/", 2) == 0) {
+		for (int i = 1; i < strlen(s); ++i) {
+			if (strncmp(&s[i], "\\:", 2) == 0) {
+				lexer->line_index += i;
+				lexer->index += i;
+
+				return 1;
+			}
+		}
+		printf("ERROR: MISSING \\: TO END COMMEND ON LINE %i.", lexer->line);
+		exit(-1);
+	}
+	else if (strncmp(s, "\\:", 2) == 0) {
+		printf("ERROR: UNEXPECTED END OF COMMENT ON LINE %i.", lexer->line);
+		exit(-1);
+	}
 	else { return 0; }
 	return 1;
 }
@@ -205,7 +217,7 @@ static int EatLiteral(Lexer* lexer, char* s) {
 					return 1;
 				}
 			}
-			printf("ERROR: MISSING \" TO END STRING ON LINE %i.", lexer->line_index);
+			printf("ERROR: MISSING \" TO END STRING ON LINE %i.", lexer->line);
 			exit(-1);
 		}
 		case '\'': {
@@ -226,7 +238,7 @@ static int EatLiteral(Lexer* lexer, char* s) {
 					return 1;
 				}
 			}
-			printf("ERROR: MISSING ' TO END STRING ON LINE %i.", lexer->line_index);
+			printf("ERROR: MISSING ' TO END STRING ON LINE %i.", lexer->line);
 			exit(-1);
 		}
 		case '`': {
@@ -247,7 +259,7 @@ static int EatLiteral(Lexer* lexer, char* s) {
 					return 1;
 				}
 			}
-			printf("ERROR: MISSING ` TO END STRING ON LINE %i.", lexer->line_index);
+			printf("ERROR: MISSING ` TO END STRING ON LINE %i.", lexer->line);
 			exit(-1);
 		}
 	}
@@ -255,7 +267,7 @@ static int EatLiteral(Lexer* lexer, char* s) {
 	if (IsDigit(c)) { // Get integer literal
 		for (int i = 1; i < strlen(s); ++i) {
 			++length;
-			if (!IsDigit(c)) {
+			if (!IsDigit(s[i])) {
 				char* str_value = (char*)malloc(length);
 
 				for (i = 0; i < length; ++i) {
@@ -263,10 +275,10 @@ static int EatLiteral(Lexer* lexer, char* s) {
 				}
 
 				char* ptr;
-				AddTokenIntValue(lexer, (int) strtol(str_value, ptr, 10);
+				AddTokenIntValue(lexer, (int) strtol(str_value, &ptr, 10));
 
-				lexer->line_index += length + 1;
-				lexer->index += length + 1;
+				lexer->line_index += length;
+				lexer->index += length;
 
 				return 1;
 			}
@@ -277,7 +289,7 @@ static int EatLiteral(Lexer* lexer, char* s) {
 	else if (IsAlphabetic(c) || c == '_') { // Get identifier
 		for (int i = 1; i < strlen(s); ++i) {
 			++length;
-			if (!IsAlphabetic(c)) {
+			if (!IsAlphabetic(s[i])) {
 				char* str_value = (char*)malloc(length);
 
 				for (i = 0; i < length; ++i) {
@@ -286,8 +298,8 @@ static int EatLiteral(Lexer* lexer, char* s) {
 
 				AddTokenIdentifierValue(lexer, str_value);
 
-				lexer->line_index += length + 1;
-				lexer->index += length + 1;
+				lexer->line_index += length;
+				lexer->index += length;
 
 				return 1;
 			}
@@ -308,6 +320,8 @@ static void EatToken(Lexer* lexer) {
 
 	char* s;
 	s = &lexer->source[lexer->index];
+
+	printf("\n%s\n", s);
 
 	int ateLiteral = EatLiteral(lexer, s);
 	if (ateLiteral > 0) {
