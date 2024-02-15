@@ -1,5 +1,7 @@
 expect CSL.blarg:)
 
+:/ This is a comment \:
+
 fun null main() {
 	CSL.showEnd("Hello, World!"):)
 }
