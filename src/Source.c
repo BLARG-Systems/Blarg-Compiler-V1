@@ -1,5 +1,6 @@
 #include "Lexer.h"
 #include "Token.h"
+#include "List.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -51,20 +52,22 @@ int main(int argc, char* argv[]) {
 
 		char* buffer = readfile(filename);
 
+		struct List tokens;
+		ListInit(&tokens);
+
 		struct Lexer lexer;
 		lexer.source = buffer;
-		lexer.source_len = filelen; // - 6; // Random extra memory at end of string(?), don't delete this or the lexer will attempt to read them
+		lexer.source_len = filelen;
 		lexer.index = 0;
 		lexer.line = 1;
 		lexer.line_index = 0;
-		lexer.token_cnt = 0;
-		lexer.tokens = (Token*)malloc((filelen) * sizeof(Token));
+		lexer.tokens = &tokens; //(Token*) malloc((filelen) * sizeof(Token));
 
 		LexSource(&lexer);
 		
 		int i = 0;
-		for (int i = 0; i < lexer.token_cnt; ++i) {
-			printf("%d | ", lexer.tokens[i].type);
+		for (int i = 0; i < lexer.tokens->size; ++i) {
+			printf("%d | ", ListGet(lexer.tokens, &i));//lexer.tokens[i].type);
 		}
 	}
 	else {

@@ -1,5 +1,6 @@
 #include "Lexer.h"
 #include "Token.h"
+#include "List.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,8 +28,7 @@ static Token MakeToken(TokenType type, int line, int line_index) {
 static void AddToken(Lexer* lexer, TokenType type) {
 	Token t = MakeToken(type, lexer->line, lexer->line_index);
 
-	lexer->tokens[lexer->token_cnt] = t;
-	++lexer->token_cnt;
+	ListAdd(lexer->tokens, &t);
 }
 
 // Creates a token with IDENTIFIER type, and adds the specified value to the token
@@ -36,8 +36,7 @@ static void AddTokenIdentifierValue(Lexer* lexer, char* value) {
 	Token t = MakeToken(TOKEN_IDENTIFIER, lexer->line, lexer->line_index);
 	t.str_value = value;
 
-	lexer->tokens[lexer->token_cnt] = t;
-	++lexer->token_cnt;
+	ListAdd(lexer->tokens, &t);
 }
 
 // Creates a token with LITERAL_STRING type, and adds the specified value to the token
@@ -45,8 +44,7 @@ static void AddTokenStrValue(Lexer* lexer, char* value) {
 	Token t = MakeToken(TOKEN_LITERAL_STRING, lexer->line, lexer->line_index);
 	t.str_value = value;
 
-	lexer->tokens[lexer->token_cnt] = t;
-	++lexer->token_cnt;
+	ListAdd(lexer->tokens, &t);
 }
 
 // Creates a token with LITERAL_INT type, and adds the specified value to the token
@@ -54,8 +52,7 @@ static void AddTokenIntValue(Lexer* lexer, int value) {
 	Token t = MakeToken(TOKEN_LITERAL_INT, lexer->line, lexer->line_index);
 	t.int_value = value;
 
-	lexer->tokens[lexer->token_cnt] = t;
-	++lexer->token_cnt;
+	ListAdd(lexer->tokens, &t);
 }
 
 // Creates a token with LITERAL_BOOL type, and adds the specified value to the token
@@ -63,8 +60,7 @@ static void AddTokenBoolValue(Lexer* lexer, bool value) {
 	Token t = MakeToken(TOKEN_LITERAL_BOOL, lexer->line, lexer->line_index);
 	t.bool_value = value;
 
-	lexer->tokens[lexer->token_cnt] = t;
-	++lexer->token_cnt;
+	ListAdd(lexer->tokens, &t); //lexer->tokens[lexer->token_cnt] = t;
 }
 
 // Returns -1 for newline, 0 if no match found, 1 if a match is found. If any match is found, a token is created and added to the token array. Also eats whitespace!
@@ -360,9 +356,10 @@ static void EatToken(Lexer* lexer) {
 void LexSource(Lexer* lexer) {
 	for (int i = 0; i < lexer->source_len+1; ++i) {
 		EatToken(lexer);
-		printf("[%i]  |  %i  ----  %i\n", lexer->index, lexer->token_cnt, lexer->tokens[lexer->token_cnt - 1].type);
-		if (lexer->token_cnt > 0 && lexer->tokens[lexer->token_cnt - 1].type == 0) {
+		printf("[%i]  |  %i  ----  %i\n", lexer->index, lexer->tokens->size, ListGet(lexer->tokens, &lexer->tokens->size - 1)->type);//lexer->tokens[lexer->token_cnt - 1].type);
+		if (*lexer->tokens->size > 0 && ListGet(lexer->tokens, &lexer->tokens->size - 1)->type == 0) {
 			printf("Lexing complete.\n\n");
+			free(lexer->source);
 			break;
 		}
 	}

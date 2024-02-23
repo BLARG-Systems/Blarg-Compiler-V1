@@ -2,6 +2,7 @@
 #define BLARG_LEXER_H
 
 #include "Token.h"
+#include "List.h"
 
 struct Lexer {
     char* source;
@@ -9,8 +10,7 @@ struct Lexer {
     int index;
     int line;
     int line_index;
-    int token_cnt;
-    Token* tokens;
+    List* tokens;
 
 } typedef Lexer;
 
