@@ -1,6 +1,5 @@
 #include "Lexer.h"
 #include "Token.h"
-#include "List.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,7 +27,8 @@ static Token MakeToken(TokenType type, int line, int line_index) {
 static void AddToken(Lexer* lexer, TokenType type) {
 	Token t = MakeToken(type, lexer->line, lexer->line_index);
 
-	ListAdd(lexer->tokens, &t);
+	lexer->tokens[lexer->token_cnt] = t;
+	++lexer->token_cnt;
 }
 
 // Creates a token with IDENTIFIER type, and adds the specified value to the token
@@ -36,7 +36,8 @@ static void AddTokenIdentifierValue(Lexer* lexer, char* value) {
 	Token t = MakeToken(TOKEN_IDENTIFIER, lexer->line, lexer->line_index);
 	t.str_value = value;
 
-	ListAdd(lexer->tokens, &t);
+	lexer->tokens[lexer->token_cnt] = t;
+	++lexer->token_cnt;
 }
 
 // Creates a token with LITERAL_STRING type, and adds the specified value to the token
@@ -44,7 +45,8 @@ static void AddTokenStrValue(Lexer* lexer, char* value) {
 	Token t = MakeToken(TOKEN_LITERAL_STRING, lexer->line, lexer->line_index);
 	t.str_value = value;
 
-	ListAdd(lexer->tokens, &t);
+	lexer->tokens[lexer->token_cnt] = t;
+	++lexer->token_cnt;
 }
 
 // Creates a token with LITERAL_INT type, and adds the specified value to the token
@@ -52,7 +54,8 @@ static void AddTokenIntValue(Lexer* lexer, int value) {
 	Token t = MakeToken(TOKEN_LITERAL_INT, lexer->line, lexer->line_index);
 	t.int_value = value;
 
-	ListAdd(lexer->tokens, &t);
+	lexer->tokens[lexer->token_cnt] = t;
+	++lexer->token_cnt;
 }
 
 // Creates a token with LITERAL_BOOL type, and adds the specified value to the token
@@ -60,88 +63,89 @@ static void AddTokenBoolValue(Lexer* lexer, bool value) {
 	Token t = MakeToken(TOKEN_LITERAL_BOOL, lexer->line, lexer->line_index);
 	t.bool_value = value;
 
-	ListAdd(lexer->tokens, &t); //lexer->tokens[lexer->token_cnt] = t;
+	lexer->tokens[lexer->token_cnt] = t;
+	++lexer->token_cnt;
 }
 
 // Returns -1 for newline, 0 if no match found, 1 if a match is found. If any match is found, a token is created and added to the token array. Also eats whitespace!
 static int EatChar(Lexer* lexer, char c) {
 	switch (c) { // I better never have to update this
-		case '\n': {
-			AddToken(lexer, TOKEN_END_OF_LINE);
-			++lexer->line;
-			lexer->line_index = 0;
-			++lexer->index;
-			return -1;
-		}
-		case ' ': {
-			break;
-		}
-		case '	': {
-			break;
-		}
-		case '(': {
-			AddToken(lexer, TOKEN_LEFT_PARENTHESIS);
-			break;
-		}
-		case ')': {
-			AddToken(lexer, TOKEN_RIGHT_PARENTHESIS);
-			break;
-		}
-		case '{': {
-			AddToken(lexer, TOKEN_LEFT_CURLYBRACE);
-			break;
-		}
-		case '}': {
-			AddToken(lexer, TOKEN_RIGHT_CURLYBRACE);
-			break;
-		}
-		case '*': {
-			AddToken(lexer, TOKEN_STAR);
-			break;
-		}
-		case '/': {
-			AddToken(lexer, TOKEN_FORWARD_SLASH);
-			break;
-		}
-		case '-': {
-			AddToken(lexer, TOKEN_DASH);
-			break;
-		}
-		case '+': {
-			AddToken(lexer, TOKEN_PLUS);
-			break;
-		}
-		case '~': {
-			AddToken(lexer, TOKEN_TILDE);
-			break;
-		}
-		case '=': {
-			AddToken(lexer, TOKEN_EQUALS);
-			break;
-		}
-		case '?': {
-			AddToken(lexer, TOKEN_QUESTION);
-			break;
-		}
-		case '&': {
-			AddToken(lexer, TOKEN_AMPERSAND);
-			break;
-		}
-		case '^': {
-			AddToken(lexer, TOKEN_CARRAT);
-			break;
-		}
-		case '|': {
-			AddToken(lexer, TOKEN_VERTICAL_BAR);
-			break;
-		}
-		case '.': {
-			AddToken(lexer, TOKEN_PERIOD);
-			break;
-		}
-		default: {
-			return 0;
-		}
+	case '\n': {
+		AddToken(lexer, TOKEN_END_OF_LINE);
+		++lexer->line;
+		lexer->line_index = 0;
+		++lexer->index;
+		return -1;
+	}
+	case ' ': {
+		break;
+	}
+	case '	': {
+		break;
+	}
+	case '(': {
+		AddToken(lexer, TOKEN_LEFT_PARENTHESIS);
+		break;
+	}
+	case ')': {
+		AddToken(lexer, TOKEN_RIGHT_PARENTHESIS);
+		break;
+	}
+	case '{': {
+		AddToken(lexer, TOKEN_LEFT_CURLYBRACE);
+		break;
+	}
+	case '}': {
+		AddToken(lexer, TOKEN_RIGHT_CURLYBRACE);
+		break;
+	}
+	case '*': {
+		AddToken(lexer, TOKEN_STAR);
+		break;
+	}
+	case '/': {
+		AddToken(lexer, TOKEN_FORWARD_SLASH);
+		break;
+	}
+	case '-': {
+		AddToken(lexer, TOKEN_DASH);
+		break;
+	}
+	case '+': {
+		AddToken(lexer, TOKEN_PLUS);
+		break;
+	}
+	case '~': {
+		AddToken(lexer, TOKEN_TILDE);
+		break;
+	}
+	case '=': {
+		AddToken(lexer, TOKEN_EQUALS);
+		break;
+	}
+	case '?': {
+		AddToken(lexer, TOKEN_QUESTION);
+		break;
+	}
+	case '&': {
+		AddToken(lexer, TOKEN_AMPERSAND);
+		break;
+	}
+	case '^': {
+		AddToken(lexer, TOKEN_CARRAT);
+		break;
+	}
+	case '|': {
+		AddToken(lexer, TOKEN_VERTICAL_BAR);
+		break;
+	}
+	case '.': {
+		AddToken(lexer, TOKEN_PERIOD);
+		break;
+	}
+	default: {
+		return 0;
+	}
 	}
 	return 1;
 }
@@ -193,71 +197,71 @@ static int EatLiteral(Lexer* lexer, char* s) {
 	int length = 0;
 
 	switch (c) { // Get string literal
-		case '"': {
-			for (int i = 1; i < strlen(s); ++i) {
-				++length;
-				if (s[i] == '"') {
-					char* str_value = (char*)malloc(length);
+	case '"': {
+		for (int i = 1; i < strlen(s); ++i) {
+			++length;
+			if (s[i] == '"') {
+				char* str_value = (char*)malloc(length);
 
-					for (i = 1; i < length; ++i) {
-						str_value[i - 1] = s[i];
-					}
-
-					//printf(strcat(str_value, "\0"));
-
-					AddTokenStrValue(lexer, str_value);
-
-					lexer->line_index += length + 1;
-					lexer->index += length + 1;
-
-					return 1;
+				for (i = 1; i < length; ++i) {
+					str_value[i - 1] = s[i];
 				}
+
+				//printf(strcat(str_value, "\0"));
+
+				AddTokenStrValue(lexer, str_value);
+
+				lexer->line_index += length + 1;
+				lexer->index += length + 1;
+
+				return 1;
 			}
-			printf("ERROR: MISSING \" TO END STRING ON LINE %i.", lexer->line);
-			exit(-1);
 		}
-		case '\'': {
-			for (int i = 1; i < strlen(s); ++i) {
-				++length;
-				if (s[i] == '\'') {
-					char* str_value = (char*)malloc(length);
+		printf("ERROR: MISSING \" TO END STRING ON LINE %i.", lexer->line);
+		exit(-1);
+	}
+	case '\'': {
+		for (int i = 1; i < strlen(s); ++i) {
+			++length;
+			if (s[i] == '\'') {
+				char* str_value = (char*)malloc(length);
 
-					for (i = 1; i < length; ++i) {
-						str_value[i - 1] = s[i];
-					}
-
-					AddTokenStrValue(lexer, str_value);
-
-					lexer->line_index += length + 1;
-					lexer->index += length + 1;
-
-					return 1;
+				for (i = 1; i < length; ++i) {
+					str_value[i - 1] = s[i];
 				}
+
+				AddTokenStrValue(lexer, str_value);
+
+				lexer->line_index += length + 1;
+				lexer->index += length + 1;
+
+				return 1;
 			}
-			printf("ERROR: MISSING ' TO END STRING ON LINE %i.", lexer->line);
-			exit(-1);
 		}
-		case '`': {
-			for (int i = 1; i < strlen(s); ++i) {
-				++length;
-				if (s[i] == '`') {
-					char* str_value = (char*)malloc(length);
+		printf("ERROR: MISSING ' TO END STRING ON LINE %i.", lexer->line);
+		exit(-1);
+	}
+	case '`': {
+		for (int i = 1; i < strlen(s); ++i) {
+			++length;
+			if (s[i] == '`') {
+				char* str_value = (char*)malloc(length);
 
-					for (i = 1; i < length; ++i) {
-						str_value[i - 1] = s[i];
-					}
-
-					AddTokenStrValue(lexer, str_value);
-
-					lexer->line_index += length + 1;
-					lexer->index += length + 1;
-
-					return 1;
+				for (i = 1; i < length; ++i) {
+					str_value[i - 1] = s[i];
 				}
+
+				AddTokenStrValue(lexer, str_value);
+
+				lexer->line_index += length + 1;
+				lexer->index += length + 1;
+
+				return 1;
 			}
-			printf("ERROR: MISSING ` TO END STRING ON LINE %i.", lexer->line);
-			exit(-1);
 		}
+		printf("ERROR: MISSING ` TO END STRING ON LINE %i.", lexer->line);
+		exit(-1);
+	}
 	}
 
 	if (IsDigit(c)) { // Get integer literal
@@ -271,7 +275,7 @@ static int EatLiteral(Lexer* lexer, char* s) {
 				}
 
 				char* ptr;
-				AddTokenIntValue(lexer, (int) strtol(str_value, &ptr, 10));
+				AddTokenIntValue(lexer, (int)strtol(str_value, &ptr, 10));
 
 				lexer->line_index += length;
 				lexer->index += length;
@@ -354,16 +358,11 @@ static void EatToken(Lexer* lexer) {
 }
 
 void LexSource(Lexer* lexer) {
-	for (int i = 0; i < lexer->source_len+1; ++i) {
+	for (int i = 0; i < lexer->source_len + 1; ++i) {
 		EatToken(lexer);
-		//printf("%i", lexer->tokens->size);
-		Token* thisToken = ((Token*) ListGet(lexer->tokens, lexer->tokens->size - 1));
-		TokenType thisType = thisToken->type;
-
-		printf("[%i]  |  %i  ----  %i\n", lexer->index, lexer->tokens->size, thisType);//lexer->tokens[lexer->token_cnt - 1].type);
-		if (thisType == TOKEN_END_OF_FILE) {
+		printf("[%i]  |  %i  ----  %i\n", lexer->index, lexer->token_cnt, lexer->tokens[lexer->token_cnt - 1].type);
+		if (lexer->token_cnt > 0 && lexer->tokens[lexer->token_cnt - 1].type == 0) {
 			printf("Lexing complete.\n\n");
-			free(lexer->source);
 			break;
 		}
 	}

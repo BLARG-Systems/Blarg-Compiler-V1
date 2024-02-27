@@ -1,6 +1,5 @@
 #include "Lexer.h"
 #include "Token.h"
-#include "List.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -13,16 +12,16 @@ int filelen;
 char* readfile(char* filename) {
 	// Get file and verify access
 	FILE* fp = fopen(filename, "r");
-	
+
 
 	if (fp != NULL) { // File exists and is readable
 		// Go to end of file, read length, then return to beginning of file
-		fseek(fp, 0, SEEK_END);
-		filelen = ftell(fp) - 7;
+		fseek(fp, 0L, SEEK_END);
+		filelen = ftell(fp);
 		fseek(fp, 0, SEEK_SET);
 
 		// Reserve memory for file string
-		char* srcBuffer = malloc(filelen * sizeof(char));
+		char* srcBuffer = (char*)malloc(filelen);
 
 		// Read file into srcBuffer, append EOF indicator
 		fread(srcBuffer, 1, filelen, fp);
@@ -52,25 +51,20 @@ int main(int argc, char* argv[]) {
 
 		char* buffer = readfile(filename);
 
-		struct List tokens;
-		ListInit(&tokens);
-
 		struct Lexer lexer;
 		lexer.source = buffer;
-		lexer.source_len = filelen;
+		lexer.source_len = filelen; // - 6; // Random extra memory at end of string(?), don't delete this or the lexer will attempt to read them
 		lexer.index = 0;
 		lexer.line = 1;
 		lexer.line_index = 0;
-		lexer.tokens = &tokens; //(Token*) malloc((filelen) * sizeof(Token));
+		lexer.token_cnt = 0;
+		lexer.tokens = (Token*)malloc((filelen) * sizeof(Token));
 
 		LexSource(&lexer);
-		
-		int i = 0;
-		for (int i = 0; i < lexer.tokens->size; ++i) {
-			Token* thisToken = (Token*) ListGet(lexer.tokens, i);
-			TokenType thisTokenType = thisToken->type;
 
-			printf("%d | ", thisTokenType);//lexer.tokens[i].type);
+		int i = 0;
+		for (int i = 0; i < lexer.token_cnt; ++i) {
+			printf("%d | ", lexer.tokens[i].type);
 		}
 	}
 	else {
