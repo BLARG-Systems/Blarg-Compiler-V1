@@ -4,6 +4,13 @@
 #include <string.h>
 #include <stdio.h>
 
+static void Reallocate(List* l) {
+	void** newData = malloc((l->size) * sizeof(l->data[0]));
+	memcpy(newData, l->data, l->size * (sizeof(void*)));
+	free(l->data);
+	l->data = newData;
+}
+
 void ListInit(List* l) {
 	l->size = 0;
 	l->data = malloc(0);
@@ -12,42 +19,19 @@ void ListInit(List* l) {
 void ListAdd(List* l, void* item) {
 	++l->size;
 
-	void* newData = malloc((l->size) * sizeof(l->data[0]));
-	
-	for (int i; i < l->size - 1; i++) {
-		(*newData)[i] = l->data[i];
-	}
+	Reallocate(l);
 
-	(*newData)[size - 1] = item;
-	free(l->data);
-
-	l->data = newData;
+	l->data[l->size - 1] = item;
 }
 
-void ListRemove(List* l, int* index) {
+void ListRemove(List* l, int index) {
 	--l->size;
 
-	void* newData = malloc((l->size) * sizeof(l->data[0]));
-
-	if (index == NULL) {
-		for (int i; i < l->size; i++) {
-			(*newData)[i] = l->data[i];
-		}
-	}
-	else {
-		for (int i; i < l->size + 1; i++) {
-			if (i != *index) {
-				(*newData)[i] = l->data[i];
-			}
-		}
-	}
-	free(l->data);
-
-	l->data = newData;
+	Reallocate(l);
 }
 
-void* ListGet(List* l, int* index) {
-	return l->data[*index];
+void* ListGet(List* l, int index) {
+	return l->data[index];
 }
 
 void ListFree(List* l) {

@@ -356,8 +356,12 @@ static void EatToken(Lexer* lexer) {
 void LexSource(Lexer* lexer) {
 	for (int i = 0; i < lexer->source_len+1; ++i) {
 		EatToken(lexer);
-		printf("[%i]  |  %i  ----  %i\n", lexer->index, lexer->tokens->size, ListGet(lexer->tokens, &lexer->tokens->size - 1)->type);//lexer->tokens[lexer->token_cnt - 1].type);
-		if (*lexer->tokens->size > 0 && ListGet(lexer->tokens, &lexer->tokens->size - 1)->type == 0) {
+		//printf("%i", lexer->tokens->size);
+		Token* thisToken = ((Token*) ListGet(lexer->tokens, lexer->tokens->size - 1));
+		TokenType thisType = thisToken->type;
+
+		printf("[%i]  |  %i  ----  %i\n", lexer->index, lexer->tokens->size, thisType);//lexer->tokens[lexer->token_cnt - 1].type);
+		if (thisType == TOKEN_END_OF_FILE) {
 			printf("Lexing complete.\n\n");
 			free(lexer->source);
 			break;

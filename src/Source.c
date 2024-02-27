@@ -17,12 +17,12 @@ char* readfile(char* filename) {
 
 	if (fp != NULL) { // File exists and is readable
 		// Go to end of file, read length, then return to beginning of file
-		fseek(fp, 0L, SEEK_END);
-		filelen = ftell(fp);
+		fseek(fp, 0, SEEK_END);
+		filelen = ftell(fp) - 7;
 		fseek(fp, 0, SEEK_SET);
 
 		// Reserve memory for file string
-		char* srcBuffer = (char*) malloc(filelen);
+		char* srcBuffer = malloc(filelen * sizeof(char));
 
 		// Read file into srcBuffer, append EOF indicator
 		fread(srcBuffer, 1, filelen, fp);
@@ -67,7 +67,10 @@ int main(int argc, char* argv[]) {
 		
 		int i = 0;
 		for (int i = 0; i < lexer.tokens->size; ++i) {
-			printf("%d | ", ListGet(lexer.tokens, &i));//lexer.tokens[i].type);
+			Token* thisToken = (Token*) ListGet(lexer.tokens, i);
+			TokenType thisTokenType = thisToken->type;
+
+			printf("%d | ", thisTokenType);//lexer.tokens[i].type);
 		}
 	}
 	else {
