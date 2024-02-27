@@ -17,7 +17,7 @@ char* readfile(char* filename) {
 	if (fp != NULL) { // File exists and is readable
 		// Go to end of file, read length, then return to beginning of file
 		fseek(fp, 0L, SEEK_END);
-		filelen = ftell(fp);
+		filelen = ftell(fp) - 6; // Again, this is confusing me, but if fixes it!
 		fseek(fp, 0, SEEK_SET);
 
 		// Reserve memory for file string
