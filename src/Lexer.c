@@ -180,9 +180,9 @@ static int EatSymbol(Lexer* lexer, char* s) {
 static int EatKeyword(Lexer* lexer, char* s) { // Yes... this is possibly one of the messiest way of doing this, but that's a future problem!
 	if (strncmp(s, "expect", 6) == 0) { AddToken(lexer, TOKEN_EXPECT); lexer->line_index += 6; lexer->index += 6; }
 	else if (strncmp(s, "while", 5) == 0) { AddToken(lexer, TOKEN_WHILE); lexer->line_index += 5; lexer->index += 5; }
-	else if (strncmp(s, "int", 3) == 0) { AddToken(lexer, TOKEN_INTEGER); lexer->line_index += 3; lexer->index += 3; }
-	else if (strncmp(s, "str", 3) == 0) { AddToken(lexer, TOKEN_STRING); lexer->line_index += 3; lexer->index += 3; }
-	else if (strncmp(s, "bool", 4) == 0) { AddToken(lexer, TOKEN_BOOL); lexer->line_index += 4; lexer->index += 4; }
+	else if (strncmp(s, "integer", 7) == 0) { AddToken(lexer, TOKEN_INTEGER); lexer->line_index += 7; lexer->index += 7; }
+	else if (strncmp(s, "string", 6) == 0) { AddToken(lexer, TOKEN_STRING); lexer->line_index += 6; lexer->index += 6; }
+	else if (strncmp(s, "boolean", 7) == 0) { AddToken(lexer, TOKEN_BOOL); lexer->line_index += 7; lexer->index += 7; }
 	else if (strncmp(s, "fun", 3) == 0) { AddToken(lexer, TOKEN_FUN); lexer->line_index += 3; lexer->index += 3; }
 	else if (strncmp(s, "null", 4) == 0) { AddToken(lexer, TOKEN_NULL); lexer->line_index += 4; lexer->index += 4; }
 	else if (strncmp(s, "true", 4) == 0) { AddTokenBoolValue(lexer, true); lexer->line_index += 4; lexer->index += 4; }
