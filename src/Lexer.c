@@ -99,6 +99,14 @@ static int EatChar(Lexer* lexer, char c) {
 		AddToken(lexer, TOKEN_RIGHT_CURLYBRACE);
 		break;
 	}
+	case '<': {
+		AddToken(lexer, TOKEN_LESSTHAN);
+		break;
+	}
+	case '>': {
+		AddToken(lexer, TOKEN_GREATERTHAN);
+		break;
+	}
 	case '*': {
 		AddToken(lexer, TOKEN_STAR);
 		break;
