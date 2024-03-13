@@ -21,6 +21,7 @@ struct Node {
 
     Node leftNode;
     Node rightNode;
+    Node attachedNodes;
     union {
         int int_value;
         char* str_value;
