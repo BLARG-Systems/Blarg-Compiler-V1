@@ -165,7 +165,7 @@ static int EatSymbol(Lexer* lexer, char* s) {
 				return 1;
 			}
 		}
-		printf("ERROR: MISSING \\: TO END COMMEND ON LINE %i.", lexer->line);
+		printf("ERROR: MISSING \\: TO END COMMENT ON LINE %i.", lexer->line);
 		exit(-1);
 	}
 	else if (strncmp(s, "\\:", 2) == 0) {
