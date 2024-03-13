@@ -28,6 +28,7 @@ char* readfile(char* filename) {
 			total += read;  // Keep track of the total read
 		}
 		fclose(fp);
+		free(buffer);
 
 		output = (char*)realloc(output, total + 1);   // Note:  skipping error handling from realloc!
 		output[total] = '\0';   // Null-terminate the string
@@ -57,7 +58,7 @@ int main(int argc, char* argv[]) {
 
 		struct Lexer lexer;
 		lexer.source = buffer;
-		lexer.source_len = filelen; // - 6; // Random extra memory at end of string(?), don't delete this or the lexer will attempt to read them
+		lexer.source_len = filelen;
 		lexer.index = 0;
 		lexer.line = 1;
 		lexer.line_index = 0;
@@ -66,10 +67,14 @@ int main(int argc, char* argv[]) {
 
 		LexSource(&lexer);
 
+		free(lexer.source);
+
 		int i = 0;
 		for (int i = 0; i < lexer.token_cnt; ++i) {
 			printf("%d | ", lexer.tokens[i].type);
 		}
+
+		free(lexer.tokens); // TEMPORARILY ensure token memory is released
 	}
 	else {
 		printf("No file argument supplied.");
