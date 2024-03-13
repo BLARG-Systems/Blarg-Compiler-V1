@@ -5,14 +5,6 @@
 #include <string.h>
 #include <stdio.h>
 
-static bool IsAlphabetic(char c) {
-	return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z');
-}
-
-static bool IsDigit(char c) {
-	return '0' <= c && c <= '9';
-}
-
 // Creates a token with the provided data
 static Token MakeToken(TokenType type, int line, int line_index) {
 	Token this_token;
@@ -272,10 +264,10 @@ static int EatLiteral(Lexer* lexer, char* s) {
 	}
 	}
 
-	if (IsDigit(c)) { // Get integer literal
+	if (isdigit(c) != 0) { // Get integer literal
 		for (int i = 1; i < strlen(s); ++i) {
 			++length;
-			if (!IsDigit(s[i])) {
+			if (isdigit(s[i]) == 0) {
 				char* str_value = (char*)malloc(length);
 
 				for (i = 0; i < length; ++i) {
@@ -294,10 +286,10 @@ static int EatLiteral(Lexer* lexer, char* s) {
 		printf("ERROR: INTEGER DID NOT END.");
 		exit(-1);
 	}
-	else if (IsAlphabetic(c) || c == '_') { // Get identifier
+	else if (isalpha(c) != 0 || c == '_') { // Get identifier
 		for (int i = 1; i < strlen(s); ++i) {
 			++length;
-			if (!IsAlphabetic(s[i])) {
+			if (isalpha(s[i]) == 0) {
 				char* str_value = (char*)malloc(length);
 
 				for (i = 0; i < length; ++i) {
