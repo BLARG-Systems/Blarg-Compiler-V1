@@ -2,7 +2,9 @@
 #define BLARG_ASTNODE_H
 
 enum NodeType {
-    NODE_VALUE,
+    NODE_INT_VALUE,
+    NODE_STR_VALUE,
+    NODE_BOOL_VALUE,
     NODE_FUNCTION,
     NODE_IF,
 
