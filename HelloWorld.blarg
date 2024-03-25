@@ -1,7 +1,6 @@
-expect CSL.blarg:)
-
 :/ This is a comment \:
 
 fun null main() {
+	string name = "BLARG!":)
 	showEnd("Hello, World!"):)
 }
