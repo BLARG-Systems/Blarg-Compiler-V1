@@ -3,12 +3,13 @@
 
 #include "Token.h"
 #include "Lexer.h"
+#include "AstNode.h"
 
 struct Parser {
-    Lexer* lexer
+    Lexer* lexer;
 } typedef Parser;
 
 // Iterate through the tokens and form an Abstract Syntax Tree
-extern void ParseTokens();
+extern Node* ParseTokens();
 
 #endif // BLARG_PARSER_H

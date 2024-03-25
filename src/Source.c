@@ -1,5 +1,7 @@
 #include "Lexer.h"
 #include "Token.h"
+#include "Parser.h"
+#include "AstNode.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -73,6 +75,8 @@ int main(int argc, char* argv[]) {
 		for (int i = 0; i < lexer.token_cnt; ++i) {
 			printf("%d | ", lexer.tokens[i].type);
 		}
+
+		Node* astNodes = ParseTokens(lexer.tokens, lexer.token_cnt);
 
 		free(lexer.tokens); // TEMPORARILY ensure token memory is released
 	}

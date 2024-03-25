@@ -2,11 +2,14 @@
 #define BLARG_ASTNODE_H
 
 enum NodeType {
+    NODE_VARIABLE,
+    NODE_FUNCTION,
+    NODE_IF,
+    NODE_BODY,
+
     NODE_INT_VALUE,
     NODE_STR_VALUE,
     NODE_BOOL_VALUE,
-    NODE_FUNCTION,
-    NODE_IF,
 
     NODE_ASSIGN,
     NODE_EQU,
@@ -21,14 +24,20 @@ enum NodeType {
 struct Node {
     NodeType type;
 
-    Node leftNode;
-    Node rightNode;
-    Node attachedNodes;
+    struct Node* nodes;
+    struct Node* next;
+
+    int start_line;
+    int end_line;
+
+    char* var_type;
+    char* var_name;
+
     union {
         int int_value;
         char* str_value;
         bool bool_value;
     };
-};
+} typedef Node;
 
 #endif // BLARG_ASTNODE_H
