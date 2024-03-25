@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <ctype.h>
 
 // Creates a token with the provided data
 static Token MakeToken(TokenType type, int line, int line_index) {
@@ -62,90 +63,90 @@ static void AddTokenBoolValue(Lexer* lexer, bool value) {
 // Returns -1 for newline, 0 if no match found, 1 if a match is found. If any match is found, a token is created and added to the token array. Also eats whitespace!
 static int EatChar(Lexer* lexer, char c) {
 	switch (c) { // I better never have to update this
-	case '\n': {
-		AddToken(lexer, TOKEN_END_OF_LINE);
-		++lexer->line;
-		lexer->line_index = 0;
-		++lexer->index;
-		return -1;
-	}
-	case ' ': {
-		break;
-	}
-	case '	': {
-		break;
-	}
-	case '(': {
-		AddToken(lexer, TOKEN_LEFT_PARENTHESIS);
-		break;
-	}
-	case ')': {
-		AddToken(lexer, TOKEN_RIGHT_PARENTHESIS);
-		break;
-	}
-	case '{': {
-		AddToken(lexer, TOKEN_LEFT_CURLYBRACE);
-		break;
-	}
-	case '}': {
-		AddToken(lexer, TOKEN_RIGHT_CURLYBRACE);
-		break;
-	}
-	case '<': {
-		AddToken(lexer, TOKEN_LESSTHAN);
-		break;
-	}
-	case '>': {
-		AddToken(lexer, TOKEN_GREATERTHAN);
-		break;
-	}
-	case '*': {
-		AddToken(lexer, TOKEN_STAR);
-		break;
-	}
-	case '/': {
-		AddToken(lexer, TOKEN_FORWARD_SLASH);
-		break;
-	}
-	case '-': {
-		AddToken(lexer, TOKEN_DASH);
-		break;
-	}
-	case '+': {
-		AddToken(lexer, TOKEN_PLUS);
-		break;
-	}
-	case '~': {
-		AddToken(lexer, TOKEN_TILDE);
-		break;
-	}
-	case '=': {
-		AddToken(lexer, TOKEN_EQUALS);
-		break;
-	}
-	case '?': {
-		AddToken(lexer, TOKEN_QUESTION);
-		break;
-	}
-	case '&': {
-		AddToken(lexer, TOKEN_AMPERSAND);
-		break;
-	}
-	case '^': {
-		AddToken(lexer, TOKEN_CARRAT);
-		break;
-	}
-	case '|': {
-		AddToken(lexer, TOKEN_VERTICAL_BAR);
-		break;
-	}
-	case '.': {
-		AddToken(lexer, TOKEN_PERIOD);
-		break;
-	}
-	default: {
-		return 0;
-	}
+		case '\n': {
+			AddToken(lexer, TOKEN_END_OF_LINE);
+			++lexer->line;
+			lexer->line_index = 0;
+			++lexer->index;
+			return -1;
+		}
+		case ' ': {
+			break;
+		}
+		case '	': {
+			break;
+		}
+		case '(': {
+			AddToken(lexer, TOKEN_LEFT_PARENTHESIS);
+			break;
+		}
+		case ')': {
+			AddToken(lexer, TOKEN_RIGHT_PARENTHESIS);
+			break;
+		}
+		case '{': {
+			AddToken(lexer, TOKEN_LEFT_CURLYBRACE);
+			break;
+		}
+		case '}': {
+			AddToken(lexer, TOKEN_RIGHT_CURLYBRACE);
+			break;
+		}
+		case '<': {
+			AddToken(lexer, TOKEN_LESSTHAN);
+			break;
+		}
+		case '>': {
+			AddToken(lexer, TOKEN_GREATERTHAN);
+			break;
+		}
+		case '*': {
+			AddToken(lexer, TOKEN_STAR);
+			break;
+		}
+		case '/': {
+			AddToken(lexer, TOKEN_FORWARD_SLASH);
+			break;
+		}
+		case '-': {
+			AddToken(lexer, TOKEN_DASH);
+			break;
+		}
+		case '+': {
+			AddToken(lexer, TOKEN_PLUS);
+			break;
+		}
+		case '~': {
+			AddToken(lexer, TOKEN_TILDE);
+			break;
+		}
+		case '=': {
+			AddToken(lexer, TOKEN_EQUALS);
+			break;
+		}
+		case '?': {
+			AddToken(lexer, TOKEN_QUESTION);
+			break;
+		}
+		case '&': {
+			AddToken(lexer, TOKEN_AMPERSAND);
+			break;
+		}
+		case '^': {
+			AddToken(lexer, TOKEN_CARRAT);
+			break;
+		}
+		case '|': {
+			AddToken(lexer, TOKEN_VERTICAL_BAR);
+			break;
+		}
+		case '.': {
+			AddToken(lexer, TOKEN_PERIOD);
+			break;
+		}
+		default: {
+			return 0;
+		}
 	}
 	return 1;
 }
@@ -165,11 +166,11 @@ static int EatSymbol(Lexer* lexer, char* s) {
 				return 1;
 			}
 		}
-		printf("ERROR: MISSING \\: TO END COMMENT ON LINE %i.", lexer->line);
+		printf("ERROR: Missing \\: to end comment on line %i.", lexer->line);
 		exit(-1);
 	}
 	else if (strncmp(s, "\\:", 2) == 0) {
-		printf("ERROR: UNEXPECTED END OF COMMENT ON LINE %i.", lexer->line);
+		printf("ERROR: Unexpected end of comment on line %i.", lexer->line);
 		exit(-1);
 	}
 	else { return 0; }
@@ -217,7 +218,7 @@ static int EatLiteral(Lexer* lexer, char* s) {
 				return 1;
 			}
 		}
-		printf("ERROR: MISSING \" TO END STRING ON LINE %i.", lexer->line);
+		printf("ERROR: Missing \" to end string on line %i.", lexer->line);
 		exit(-1);
 	}
 	case '\'': {
@@ -238,7 +239,7 @@ static int EatLiteral(Lexer* lexer, char* s) {
 				return 1;
 			}
 		}
-		printf("ERROR: MISSING ' TO END STRING ON LINE %i.", lexer->line);
+		printf("ERROR: Missing ' to end string on line %i.", lexer->line);
 		exit(-1);
 	}
 	case '`': {
@@ -259,7 +260,7 @@ static int EatLiteral(Lexer* lexer, char* s) {
 				return 1;
 			}
 		}
-		printf("ERROR: MISSING ` TO END STRING ON LINE %i.", lexer->line);
+		printf("ERROR: Missing ` to end string on line %i.", lexer->line);
 		exit(-1);
 	}
 	}
@@ -283,7 +284,7 @@ static int EatLiteral(Lexer* lexer, char* s) {
 				return 1;
 			}
 		}
-		printf("ERROR: INTEGER DID NOT END.");
+		printf("ERROR: Integer did not end.");
 		exit(-1);
 	}
 	else if (isalpha(c) != 0 || c == '_') { // Get identifier
@@ -304,7 +305,7 @@ static int EatLiteral(Lexer* lexer, char* s) {
 				return 1;
 			}
 		}
-		printf("ERROR: IDENTIFIER DID NOT END.");
+		printf("ERROR: Identifier did not end.");
 		exit(-1);
 	}
 
