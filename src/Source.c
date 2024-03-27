@@ -30,7 +30,6 @@ char* readfile(char* filename) {
 			total += read;  // Keep track of the total read
 		}
 		fclose(fp);
-		free(buffer);
 
 		output = (char*)realloc(output, total + 1);   // Note:  skipping error handling from realloc!
 		output[total] = '\0';   // Null-terminate the string
@@ -72,9 +71,11 @@ int main(int argc, char* argv[]) {
 		free(lexer.source);
 
 		int i = 0;
+		printf("| ");
 		for (int i = 0; i < lexer.token_cnt; ++i) {
 			printf("%d | ", lexer.tokens[i].type);
 		}
+		printf("\n");
 
 		Node* astNodes = ParseTokens(lexer.tokens, lexer.token_cnt);
 
