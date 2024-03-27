@@ -324,6 +324,18 @@ static void EatToken(Lexer* lexer) {
 
 	printf("\n%s\n", s);
 
+	int ateKeyword = EatKeyword(lexer, s);
+	if (ateKeyword > 0) {
+		return;
+	}
+
+	int ateSymbol = EatSymbol(lexer, s);
+	if (ateSymbol > 0) {
+		lexer->line_index += 2;
+		lexer->index += 2;
+		return;
+	}
+
 	int ateLiteral = EatLiteral(lexer, s);
 	if (ateLiteral > 0) {
 		return;
@@ -339,18 +351,6 @@ static void EatToken(Lexer* lexer) {
 		return;
 	}
 	else if (ateChar < 0) {
-		return;
-	}
-
-	int ateSymbol = EatSymbol(lexer, s);
-	if (ateSymbol > 0) {
-		lexer->line_index += 2;
-		lexer->index += 2;
-		return;
-	}
-
-	int ateKeyword = EatKeyword(lexer, s);
-	if (ateKeyword > 0) {
 		return;
 	}
 

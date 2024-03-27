@@ -2,20 +2,22 @@
 #define BLARG_ASTNODE_H
 
 enum NodeType {
-    NODE_VARIABLE,
+    NODE_VARIABLE = 0,
     NODE_FUNCTION,
     NODE_IF,
     NODE_BODY,
 
+    NODE_VARIABLE_REF = 100,
     NODE_INT_VALUE,
     NODE_STR_VALUE,
     NODE_BOOL_VALUE,
 
-    NODE_ASSIGN,
+    NODE_ASSIGN = 200,
     NODE_EQU,
     NODE_LT,
     NODE_GT,
-    NODE_ADD,
+
+    NODE_ADD = 300,
     NODE_SUB,
     NODE_MUL,
     NODE_DIV
