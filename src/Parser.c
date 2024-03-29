@@ -33,6 +33,8 @@ static Node* ParseIntVariable(Token* tokens, int* i) {
 	}
 
 	*i += 3;
+
+	return newNode;
 }
 
 static Node* ParseStringVariable(Token* tokens, int* i) {
@@ -63,6 +65,8 @@ static Node* ParseStringVariable(Token* tokens, int* i) {
 	}
 
 	*i += 3;
+
+	return newNode;
 }
 
 static Node* ParseBoolVariable(Token* tokens, int* i) {
@@ -93,6 +97,8 @@ static Node* ParseBoolVariable(Token* tokens, int* i) {
 	}
 
 	*i += 3;
+
+	return newNode;
 }
 
 static Node* ParseExpression(Token* tokens, int* i) {
@@ -149,9 +155,12 @@ static Node* ParseExpression(Token* tokens, int* i) {
 			right->bool_value = tokens[*i + 2].bool_value;
 		}
 	}
+
+	return newNode;
 }
 
 Node* ParseTokens(Token* tokens, int token_cnt) {
+	Node* firstNode = NULL;
 	Node* thisNode = NULL;
 
 	for (int i = 0; i < token_cnt; ++i) {
@@ -207,7 +216,13 @@ Node* ParseTokens(Token* tokens, int token_cnt) {
 				thisNode = newNode;
 			}
 		}
+
+		if (firstNode == NULL && thisNode != NULL) {
+			firstNode = thisNode;
+		}
 	}
 
-	return thisNode;
+	printf("--- %i ---", firstNode->type);
+
+	return firstNode;
 }

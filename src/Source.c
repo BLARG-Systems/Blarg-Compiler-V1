@@ -77,9 +77,24 @@ int main(int argc, char* argv[]) {
 		}
 		printf("\n");
 
-		Node* astNodes = ParseTokens(lexer.tokens, lexer.token_cnt);
+		Node* firstNode = ParseTokens(lexer.tokens, lexer.token_cnt);
 
 		free(lexer.tokens); // TEMPORARILY ensure token memory is released
+
+		Node* printNode = firstNode;
+
+		printf("\nNODES!!!\n");
+		while (true) {
+			printf("%i\n", *printNode->var_name);
+
+			if (printNode->next != NULL) {
+				printNode = printNode->next;
+			}
+			else {
+				printf("DONE");
+				break;
+			}
+		}
 	}
 	else {
 		printf("No file argument supplied.");

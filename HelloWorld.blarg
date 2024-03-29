@@ -1,6 +1,8 @@
 :/ This is a comment \:
 
 fun null main() {
-	string name = "BLARG!":)
+	string one = "BLARG!":)
+	string two = "BLARG!":)
+	string three = "BLARG!":)
 	showEnd("Hello, World!"):)
 }
