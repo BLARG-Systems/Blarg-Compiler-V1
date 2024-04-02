@@ -77,18 +77,18 @@ int main(int argc, char* argv[]) {
 		}
 		printf("\n");
 
-		Node* firstNode = ParseTokens(lexer.tokens, lexer.token_cnt);
+		Node firstNode = ParseTokens(lexer.tokens, lexer.token_cnt);
 
-		free(lexer.tokens); // TEMPORARILY ensure token memory is released
+		free(lexer.tokens);
 
-		Node* printNode = firstNode;
+		Node printNode = firstNode;
 
 		printf("\nNODES!!!\n");
 		while (true) {
-			printf("%i\n", *printNode->var_name);
+			printf("%i  - %s\n", printNode.type, printNode.var_name);
 
-			if (printNode->next != NULL) {
-				printNode = printNode->next;
+			if (printNode.next != NULL) {
+				printNode = *printNode.next;
 			}
 			else {
 				printf("DONE");

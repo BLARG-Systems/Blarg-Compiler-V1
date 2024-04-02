@@ -10,6 +10,6 @@ struct Parser {
 } typedef Parser;
 
 // Iterate through the tokens and form an Abstract Syntax Tree
-extern Node* ParseTokens();
+extern Node ParseTokens();
 
 #endif // BLARG_PARSER_H

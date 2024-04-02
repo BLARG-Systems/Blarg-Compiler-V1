@@ -5,30 +5,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static Node* ParseIntVariable(Token* tokens, int* i) {
-	Node* newNode;
-	newNode->type = NODE_VARIABLE;
-	newNode->var_type = "integer";
-	newNode->start_line = tokens[*i].line;
+static Node ParseIntVariable(Token* tokens, int* i) {
+	Node newNode;
+	newNode.type = NODE_VARIABLE;
+	newNode.var_type = "integer";
+	newNode.start_line = tokens[*i].line;
 	
 	if (tokens[*i + 1].type == TOKEN_IDENTIFIER) {
-		newNode->var_name = tokens[*i + 1].str_value;
+		newNode.var_name = tokens[*i + 1].str_value;
 	}
 	else {
-		printf("ERROR: Missing identifier after 'integer' on line %i.", newNode->start_line);
+		printf("ERROR: Missing identifier after 'integer' on line %i.", newNode.start_line);
 		exit(-1);
 	}
 
 	if (tokens[*i + 2].type != TOKEN_EQUALS)  {
-		printf("ERROR: Missing assignment after identifier on line %i.", newNode->start_line);
+		printf("ERROR: Missing assignment after identifier on line %i.", newNode.start_line);
 		exit(-1);
 	}
 
 	if (tokens[*i + 3].type == TOKEN_LITERAL_INT) {
-		newNode->int_value = tokens[*i + 3].int_value;
+		newNode.int_value = tokens[*i + 3].int_value;
 	}
 	else {
-		printf("ERROR: Missing literal after identifier on line %i.", newNode->start_line);
+		printf("ERROR: Missing literal after identifier on line %i.", newNode.start_line);
 		exit(-1);
 	}
 
@@ -37,30 +37,30 @@ static Node* ParseIntVariable(Token* tokens, int* i) {
 	return newNode;
 }
 
-static Node* ParseStringVariable(Token* tokens, int* i) {
-	Node* newNode;
-	newNode->type = NODE_VARIABLE;
-	newNode->var_type = "string";
-	newNode->start_line = tokens[*i].line;
+static Node ParseStringVariable(Token* tokens, int* i) {
+	Node newNode;
+	newNode.type = NODE_VARIABLE;
+	newNode.var_type = "string";
+	newNode.start_line = tokens[*i].line;
 
 	if (tokens[*i + 1].type == TOKEN_IDENTIFIER) {
-		newNode->var_name = tokens[*i + 1].str_value;
+		newNode.var_name = tokens[*i + 1].str_value;
 	}
 	else {
-		printf("ERROR: Missing identifier after 'string' on line %i.", newNode->start_line);
+		printf("ERROR: Missing identifier after 'string' on line %i.", newNode.start_line);
 		exit(-1);
 	}
 
 	if (tokens[*i + 2].type != TOKEN_EQUALS) {
-		printf("ERROR: Missing assignment after identifier on line %i.", newNode->start_line);
+		printf("ERROR: Missing assignment after identifier on line %i.", newNode.start_line);
 		exit(-1);
 	}
 
 	if (tokens[*i + 3].type == TOKEN_LITERAL_STRING) {
-		newNode->str_value = tokens[*i + 3].str_value;
+		newNode.str_value = tokens[*i + 3].str_value;
 	}
 	else {
-		printf("ERROR: Missing literal after identifier on line %i.", newNode->start_line);
+		printf("ERROR: Missing literal after identifier on line %i.", newNode.start_line);
 		exit(-1);
 	}
 
@@ -69,30 +69,30 @@ static Node* ParseStringVariable(Token* tokens, int* i) {
 	return newNode;
 }
 
-static Node* ParseBoolVariable(Token* tokens, int* i) {
-	Node* newNode;
-	newNode->type = NODE_VARIABLE;
-	newNode->var_type = "boolean";
-	newNode->start_line = tokens[*i].line;
+static Node ParseBoolVariable(Token* tokens, int* i) {
+	Node newNode;
+	newNode.type = NODE_VARIABLE;
+	newNode.var_type = "boolean";
+	newNode.start_line = tokens[*i].line;
 
 	if (tokens[*i + 1].type == TOKEN_IDENTIFIER) {
-		newNode->var_name = tokens[*i + 1].str_value;
+		newNode.var_name = tokens[*i + 1].str_value;
 	}
 	else {
-		printf("ERROR: Missing identifier after 'boolean' on line %i.", newNode->start_line);
+		printf("ERROR: Missing identifier after 'boolean' on line %i.", newNode.start_line);
 		exit(-1);
 	}
 
 	if (tokens[*i + 2].type != TOKEN_EQUALS) {
-		printf("ERROR: Missing assignment after identifier on line %i.", newNode->start_line);
+		printf("ERROR: Missing assignment after identifier on line %i.", newNode.start_line);
 		exit(-1);
 	}
 
 	if (tokens[*i + 3].type == TOKEN_LITERAL_BOOL) {
-		newNode->bool_value = tokens[*i + 3].bool_value;
+		newNode.bool_value = tokens[*i + 3].bool_value;
 	}
 	else {
-		printf("ERROR: Missing literal after identifier on line %i.", newNode->start_line);
+		printf("ERROR: Missing literal after identifier on line %i.", newNode.start_line);
 		exit(-1);
 	}
 
@@ -101,72 +101,77 @@ static Node* ParseBoolVariable(Token* tokens, int* i) {
 	return newNode;
 }
 
-static Node* ParseExpression(Token* tokens, int* i) {
+/*static Node* ParseExpression(Token* tokens, int* i) {
 	Node* newNode;
 	Node* left;
 	Node* right;
 
 	if (tokens[*i + 1].type >= 106 && tokens[*i + 1].type <= 109) {
-		newNode->type = tokens[*i + 1].type + 194;
-		newNode->start_line = tokens[*i + 1].line;
-		newNode->nodes = malloc(sizeof(Node) * 2);
-		newNode->nodes[0] = *left;
-		newNode->nodes[1] = *right;
+		newNode.type = tokens[*i + 1].type + 194;
+		newNode.start_line = tokens[*i + 1].line;
+		newNode.nodes = malloc(sizeof(Node) * 2);
+		newNode.nodes[0] = *left;
+		newNode.nodes[1] = *right;
 	}
 	else {
-		printf("ERROR: Missing operation after identifier on line %i.", newNode->start_line);
+		printf("ERROR: Missing operation after identifier on line %i.", newNode.start_line);
 		exit(-1);
 	}
 
 	if (tokens[*i].type == TOKEN_IDENTIFIER) {
-		left->type = NODE_VARIABLE_REF;
-		left->var_name = tokens[*i].str_value;
-		left->start_line = tokens[*i].line;
+		left.type = NODE_VARIABLE_REF;
+		left.var_name = tokens[*i].str_value;
+		left.start_line = tokens[*i].line;
 	}
 	else if (tokens[*i].type >= 400 && tokens[*i].type <= 402) {
-		left->type = tokens[*i].type - 300;
-		left->start_line = tokens[*i].line;
+		left.type = tokens[*i].type - 300;
+		left.start_line = tokens[*i].line;
 
 		if (tokens[*i].type == TOKEN_LITERAL_INT) {
-			left->int_value = tokens[*i].int_value;
+			left.int_value = tokens[*i].int_value;
 		} else if (tokens[*i].type == TOKEN_LITERAL_STRING) {
-			left->str_value = tokens[*i].str_value;
+			left.str_value = tokens[*i].str_value;
 		} else if (tokens[*i].type == TOKEN_LITERAL_BOOL) {
-			left->bool_value = tokens[*i].bool_value;
+			left.bool_value = tokens[*i].bool_value;
 		}
 	}
 
 	if (tokens[*i + 2].type == TOKEN_IDENTIFIER) {
-		right->type = NODE_VARIABLE_REF;
-		right->var_name = tokens[*i + 2].str_value;
-		right->start_line = tokens[*i + 2].line;
+		right.type = NODE_VARIABLE_REF;
+		right.var_name = tokens[*i + 2].str_value;
+		right.start_line = tokens[*i + 2].line;
 	}
 	else if (tokens[*i + 2].type >= 400 && tokens[*i].type <= 402) {
-		right->type = tokens[*i + 2].type - 300;
-		right->start_line = tokens[*i + 2].line;
+		right.type = tokens[*i + 2].type - 300;
+		right.start_line = tokens[*i + 2].line;
 
 		if (tokens[*i + 2].type == TOKEN_LITERAL_INT) {
-			right->int_value = tokens[*i + 2].int_value;
+			right.int_value = tokens[*i + 2].int_value;
 		}
 		else if (tokens[*i + 2].type == TOKEN_LITERAL_STRING) {
-			right->str_value = tokens[*i + 2].str_value;
+			right.str_value = tokens[*i + 2].str_value;
 		}
 		else if (tokens[*i + 2].type == TOKEN_LITERAL_BOOL) {
-			right->bool_value = tokens[*i + 2].bool_value;
+			right.bool_value = tokens[*i + 2].bool_value;
 		}
 	}
 
 	return newNode;
-}
+}*/
 
-Node* ParseTokens(Token* tokens, int token_cnt) {
-	Node* firstNode = NULL;
-	Node* thisNode = NULL;
+Node ParseTokens(Token* tokens, int token_cnt) {
+	Node firstNode;
+	firstNode.type = NODE_UNINITIALIZED;
+	Node thisNode;
+	thisNode.type = NODE_UNINITIALIZED;
+
+	int nodeCnt = 0;
 
 	for (int i = 0; i < token_cnt; ++i) {
-		Node* newNode = NULL;
+		Node newNode;
+		newNode.type = NODE_UNINITIALIZED;
 
-		printf("%i\n", tokens[i].type);
+		//printf("%i\n", tokens[i].type);
 
 		switch (tokens[i].type)
 		{
@@ -182,47 +187,51 @@ Node* ParseTokens(Token* tokens, int token_cnt) {
 				newNode = ParseBoolVariable(tokens, &i);
 				break;
 			}
-			case(TOKEN_IDENTIFIER): {
-				if (tokens[i + 1].type < 400 || tokens[i + 1].type > 402) { break; }
+			/*case(TOKEN_IDENTIFIER): {
+				if (tokens[i + 1].type < 106 || tokens[i + 1].type > 109) { break; }
 				newNode = ParseExpression(tokens, &i);
 				break;
 			}
 			case(TOKEN_LITERAL_INT): {
-				if (tokens[i + 1].type < 400 || tokens[i + 1].type > 402) { break; }
+				if (tokens[i + 1].type < 106 || tokens[i + 1].type > 109) { break; }
 				newNode = ParseExpression(tokens, &i);
 				break;
 			}
 			case(TOKEN_LITERAL_STRING): {
-				if (tokens[i + 1].type < 400 || tokens[i + 1].type > 402) { break; }
+				if (tokens[i + 1].type < 106 || tokens[i + 1].type > 109) { break; }
 				newNode = ParseExpression(tokens, &i);
 				break;
 			}
 			case(TOKEN_LITERAL_BOOL): {
-				if (tokens[i + 1].type < 400 || tokens[i + 1].type > 402) { break; }
+				if (tokens[i + 1].type < 106 || tokens[i + 1].type > 109) { break; }
 				newNode = ParseExpression(tokens, &i);
 				break;
-			}
+			}*/
 			default: {
 				break;
 			}
 		}
 
-		if (newNode != NULL) {
-			if (thisNode == NULL) {
+		if (newNode.type != NODE_UNINITIALIZED) {
+			if (thisNode.type == NODE_UNINITIALIZED) {
 				thisNode = newNode;
+				++nodeCnt;
 			}
 			else {
-				thisNode->next = newNode;
+				thisNode.next = &newNode;
 				thisNode = newNode;
+				++nodeCnt;
 			}
+
+			printf("%i  - %s\n", newNode.type, newNode.var_name);
 		}
 
-		if (firstNode == NULL && thisNode != NULL) {
+		if (firstNode.type == NODE_UNINITIALIZED && thisNode.type != NODE_UNINITIALIZED) {
 			firstNode = thisNode;
 		}
 	}
 
-	printf("--- %i ---", firstNode->type);
+	printf("--- %i ---", nodeCnt);
 
 	return firstNode;
 }
