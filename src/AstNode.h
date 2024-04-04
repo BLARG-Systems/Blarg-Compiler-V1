@@ -2,11 +2,10 @@
 #define BLARG_ASTNODE_H
 
 enum NodeType {
-    NODE_UNINITIALIZED = 0,
-    NODE_VARIABLE = 1,
+    NODE_VARIABLE,
     NODE_FUNCTION,
+    NODE_FUNCTION_CALL,
     NODE_IF,
-    NODE_BODY,
 
     NODE_VARIABLE_REF = 100,
     NODE_INT_VALUE,
@@ -27,8 +26,10 @@ enum NodeType {
 struct Node {
     NodeType type;
 
-    struct Node* nodes;
+    struct Node** nodes;
+
     struct Node* next;
+    struct Node* prev;
 
     int start_line;
     int end_line;

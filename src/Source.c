@@ -75,26 +75,22 @@ int main(int argc, char* argv[]) {
 		for (int i = 0; i < lexer.token_cnt; ++i) {
 			printf("%d | ", lexer.tokens[i].type);
 		}
-		printf("\n");
+		printf("\n\n");
 
-		Node firstNode = ParseTokens(lexer.tokens, lexer.token_cnt);
+		Node* firstNode = ParseTokens(lexer.tokens, lexer.token_cnt);
 
 		free(lexer.tokens);
 
-		Node printNode = firstNode;
+		/*Node* printNode = firstNode;
 
-		printf("\nNODES!!!\n");
-		while (true) {
-			printf("%i  - %s\n", printNode.type, printNode.var_name);
+		while (printNode != NULL) {
+			printf("%i  - %s\n", printNode->type, printNode->var_name);
 
-			if (printNode.next != NULL) {
-				printNode = *printNode.next;
-			}
-			else {
-				printf("DONE");
-				break;
-			}
+			printNode = printNode->next;
 		}
+
+		printf("DONE");
+		*/
 	}
 	else {
 		printf("No file argument supplied.");
