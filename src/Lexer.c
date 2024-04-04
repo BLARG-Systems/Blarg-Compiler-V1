@@ -322,7 +322,7 @@ static void EatToken(Lexer* lexer) {
 	char* s;
 	s = &lexer->source[lexer->index];
 
-	printf("\n%s\n", s);
+	//printf("\n%s\n", s); // Print current file string
 
 	int ateKeyword = EatKeyword(lexer, s);
 	if (ateKeyword > 0) {
@@ -359,9 +359,18 @@ static void EatToken(Lexer* lexer) {
 }
 
 void LexSource(Lexer* lexer) {
+	int old_token_cnt = -1;
 	for (int i = 0; i < lexer->source_len + 1; ++i) {
 		EatToken(lexer);
-		printf("[%i]  |  %i  ----  %i\n", lexer->index, lexer->token_cnt, lexer->tokens[lexer->token_cnt - 1].type);
+		if (lexer->token_cnt != old_token_cnt) {
+			old_token_cnt = lexer->token_cnt;
+
+			printf("[%i]  |  %i  ----  %i\n", lexer->index, lexer->token_cnt, lexer->tokens[lexer->token_cnt - 1].type);
+		}
+		else {
+			printf("[%i]  | No new token. \n");
+		}
+		
 		if (lexer->token_cnt > 0 && lexer->tokens[lexer->token_cnt - 1].type == 0) {
 			printf("Lexing complete.\n\n");
 			break;

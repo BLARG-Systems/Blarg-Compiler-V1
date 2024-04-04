@@ -231,6 +231,8 @@ Node ParseTokens(Token* tokens, int token_cnt) {
 		}
 	}
 
+	thisNode.next = NULL;
+
 	printf("--- %i ---", nodeCnt);
 
 	return firstNode;
