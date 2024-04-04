@@ -24,7 +24,7 @@ enum NodeType {
     NODE_DIV
 } typedef NodeType;
 
-typedef struct Node {
+struct Node {
     NodeType type;
 
     struct Node* nodes;
@@ -41,6 +41,6 @@ typedef struct Node {
         char* str_value;
         bool bool_value;
     };
-} Node;
+} typedef Node;
 
 #endif // BLARG_ASTNODE_H
