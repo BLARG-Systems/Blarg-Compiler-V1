@@ -4,6 +4,7 @@
 #include "Token.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 static Node* ParseIntVariable(Token* tokens, int* i) {
 	Node* newNode = malloc(sizeof(Node));
@@ -63,6 +64,8 @@ static Node* ParseStringVariable(Token* tokens, int* i) {
 		printf("ERROR: Missing literal after identifier on line %i.", newNode->start_line);
 		exit(-1);
 	}
+
+	
 
 	*i += 3;
 
@@ -203,7 +206,7 @@ Node* ParseTokens(Token* tokens, int token_cnt) {
 					//newNode = ParseFunCall(tokens, &i);
 				}
 				else {
-					printf("ERROR: Unexpected identifier on line %i.", tokens[*i + 2].line);
+					printf("ERROR: Unexpected identifier on line %i.", tokens[i + 2].line);
 					exit(-1);
 				}
 
@@ -214,7 +217,7 @@ Node* ParseTokens(Token* tokens, int token_cnt) {
 					newNode = ParseExpression(tokens, &i, NULL);
 				}
 				else {
-					printf("ERROR: Unexpected integer on line %i.", tokens[*i + 2].line);
+					printf("ERROR: Unexpected integer on line %i.", tokens[i + 2].line);
 					exit(-1);
 				}
 				
@@ -224,8 +227,11 @@ Node* ParseTokens(Token* tokens, int token_cnt) {
 				if (tokens[i + 1].type >= TOKEN_PLUS && tokens[i + 1].type <= TOKEN_FORWARD_SLASH) {
 					newNode = ParseExpression(tokens, &i, NULL);
 				}
+				else if (tokens[i - 1].type == 100) {
+
+				}
 				else {
-					printf("ERROR: Unexpected string on line %i.", tokens[*i + 2].line);
+					printf("ERROR: Unexpected string on line %i.", tokens[i + 2].line);
 					exit(-1);
 				}
 				break;
@@ -235,7 +241,7 @@ Node* ParseTokens(Token* tokens, int token_cnt) {
 					newNode = ParseExpression(tokens, &i, NULL);
 				}
 				else {
-					printf("ERROR: Unexpected bool on line %i.", tokens[*i + 2].line);
+					printf("ERROR: Unexpected bool on line %i.", tokens[i + 2].line);
 					exit(-1);
 				}
 				

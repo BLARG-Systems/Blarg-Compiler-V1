@@ -208,7 +208,7 @@ static int EatLiteral(Lexer* lexer, char* s) {
 					str_value[i - 1] = s[i];
 				}
 
-				//printf(strcat(str_value, "\0"));
+				str_value[length] = '\0';
 
 				AddTokenStrValue(lexer, str_value);
 
@@ -231,6 +231,8 @@ static int EatLiteral(Lexer* lexer, char* s) {
 					str_value[i - 1] = s[i];
 				}
 
+				str_value[length] = '\0';
+
 				AddTokenStrValue(lexer, str_value);
 
 				lexer->line_index += length + 1;
@@ -251,6 +253,8 @@ static int EatLiteral(Lexer* lexer, char* s) {
 				for (i = 1; i < length; ++i) {
 					str_value[i - 1] = s[i];
 				}
+
+				str_value[length] = '\0';
 
 				AddTokenStrValue(lexer, str_value);
 
@@ -296,6 +300,8 @@ static int EatLiteral(Lexer* lexer, char* s) {
 				for (i = 0; i < length; ++i) {
 					str_value[i] = s[i];
 				}
+
+				str_value[length] = '\0';
 
 				AddTokenIdentifierValue(lexer, str_value);
 
@@ -359,7 +365,7 @@ static void EatToken(Lexer* lexer) {
 }
 
 void LexSource(Lexer* lexer) {
-	int old_token_cnt = -1;
+	int old_token_cnt = 0;
 	for (int i = 0; i < lexer->source_len + 1; ++i) {
 		EatToken(lexer);
 		if (lexer->token_cnt != old_token_cnt) {

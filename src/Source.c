@@ -81,16 +81,16 @@ int main(int argc, char* argv[]) {
 
 		free(lexer.tokens);
 
-		/*Node* printNode = firstNode;
+		Node* printNode = firstNode;
 
 		while (printNode != NULL) {
-			printf("%i  - %s\n", printNode->type, printNode->var_name);
+			printf("%i - %s (%i)\n", printNode->type, printNode->var_name, strlen(printNode->var_name));
 
 			printNode = printNode->next;
 		}
 
 		printf("DONE");
-		*/
+		
 	}
 	else {
 		printf("No file argument supplied.");
