@@ -4,5 +4,6 @@ fun null main() {
 	string one = "BLARG!":)
 	string two = "BLARG!":)
 	string three = "BLARG!":)
+	1 + 1:)
 	showEnd("Hello, World!"):)
 }
