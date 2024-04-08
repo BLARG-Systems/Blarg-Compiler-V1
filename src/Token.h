@@ -37,11 +37,11 @@ enum TokenType {
     TOKEN_EXPECT = 300,
     TOKEN_WHILE,
     TOKEN_FOR,
-    TOKEN_INTEGER,
+    TOKEN_INTEGER, // Types start 303
     TOKEN_STRING,
     TOKEN_BOOL,
+    TOKEN_NULL, // Types end 306
     TOKEN_FUN,
-    TOKEN_NULL,
 
     // Value tokens
     TOKEN_LITERAL_INT = 400,

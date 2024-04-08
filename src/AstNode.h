@@ -26,6 +26,7 @@ enum NodeType {
 struct Node {
     NodeType type;
 
+    struct Node** funArgs;
     struct Node** nodes;
 
     struct Node* next;

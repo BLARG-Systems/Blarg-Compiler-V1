@@ -84,7 +84,12 @@ int main(int argc, char* argv[]) {
 		Node* printNode = firstNode;
 
 		while (printNode != NULL) {
-			printf("%i - %s (%i)\n", printNode->type, printNode->var_name, strlen(printNode->var_name));
+			if (printNode->type == NODE_VARIABLE || printNode->type == NODE_FUNCTION || printNode->type == NODE_FUNCTION_CALL) {
+				printf("%i  - %s (%i)\n", printNode->type, printNode->var_name, strlen(printNode->var_name)); // Print variable nodes
+			}
+			else if (printNode->type >= NODE_ADD) {
+				printf("%i  - EXPR \n", printNode->type);
+			}
 
 			printNode = printNode->next;
 		}
