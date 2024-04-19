@@ -104,6 +104,143 @@ static Node* ParseBoolVariable(Token* tokens, int* i) {
 	return newNode;
 }
 
+Node* ParseTokensBody(Token* tokens, int token_cnt) {
+	Node* firstNode = NULL;
+	Node* thisNode = NULL;
+
+	printf()
+
+	int nodeCnt = 0;
+
+	for (int i = 0; i < token_cnt; ++i) {
+		Node* newNode = NULL;
+
+		printf("TOKEN: %i - ", tokens[i].type);
+
+		switch (tokens[i].type)
+		{
+		case(TOKEN_INTEGER): {
+			newNode = ParseIntVariable(tokens, &i);
+			break;
+		}
+		case(TOKEN_STRING): {
+			newNode = ParseStringVariable(tokens, &i);
+			break;
+		}
+		case(TOKEN_BOOL): {
+			newNode = ParseBoolVariable(tokens, &i);
+			break;
+		}
+		case(TOKEN_IDENTIFIER): {
+			if (tokens[i + 1].type >= TOKEN_PLUS && tokens[i + 1].type <= TOKEN_FORWARD_SLASH) {
+				newNode = ParseExpression(tokens, &i, NULL);
+			}
+			else if (tokens[i + 1].type == 100) {
+				newNode = ParseFunCall(tokens, &i);
+			}
+			else {
+				printf("ERROR: Unexpected identifier on line %i.", tokens[i].line);
+				exit(-1);
+			}
+
+			break;
+		}
+		case(TOKEN_LITERAL_INT): {
+			if (tokens[i + 1].type >= TOKEN_PLUS && tokens[i + 1].type <= TOKEN_FORWARD_SLASH) {
+				newNode = ParseExpression(tokens, &i, NULL);
+			}
+			else {
+				printf("ERROR: Unexpected integer on line %i.", tokens[i].line);
+				exit(-1);
+			}
+
+			break;
+		}
+		case(TOKEN_LITERAL_STRING): {
+			if (tokens[i + 1].type >= TOKEN_PLUS && tokens[i + 1].type <= TOKEN_FORWARD_SLASH) {
+				newNode = ParseExpression(tokens, &i, NULL);
+			}
+			else if (tokens[i - 1].type == 100) {
+				// REMOVE THIS ONCE READY
+			}
+			else {
+				printf("ERROR: Unexpected string on line %i.", tokens[i].line);
+				exit(-1);
+			}
+			break;
+		}
+		case(TOKEN_LITERAL_BOOL): {
+			if (tokens[i + 1].type >= TOKEN_PLUS && tokens[i + 1].type <= TOKEN_FORWARD_SLASH) {
+				newNode = ParseExpression(tokens, &i, NULL);
+			}
+			else {
+				printf("ERROR: Unexpected bool on line %i.", tokens[i].line);
+				exit(-1);
+			}
+
+			break;
+		}
+		case(TOKEN_PLUS): {
+			break;
+		}
+		case(TOKEN_DASH): {
+			break;
+		}
+		case(TOKEN_STAR): {
+			break;
+		}
+		case(TOKEN_FORWARD_SLASH): {
+			break;
+		}
+		case(TOKEN_FUN): {
+			if (tokens[i + 1].type >= TOKEN_INTEGER && tokens[i + 1].type <= TOKEN_NULL && tokens[i + 2].type == TOKEN_IDENTIFIER) {
+				newNode = ParseFunDeclaration(tokens, &i);
+			}
+			else {
+				printf("ERROR: Unexpected function on line %i.", tokens[i].line);
+				exit(-1);
+			}
+
+			break;
+		}
+		default: {
+			break;
+		}
+		}
+
+		if (newNode != NULL) {
+			if (thisNode == NULL) {
+				thisNode = newNode;
+				++nodeCnt;
+			}
+			else {
+				thisNode->next = newNode;
+				newNode->prev = thisNode;
+				thisNode = newNode;
+				++nodeCnt;
+			}
+
+			if (newNode->type == NODE_VARIABLE || newNode->type == NODE_FUNCTION || newNode->type == NODE_FUNCTION_CALL) {
+				printf("%i  - %s\n", newNode->type, newNode->var_name); // Print variable nodes
+			}
+			else if (newNode->type >= NODE_ADD) {
+				printf("%i  - EXPR\n", newNode->type);
+			}
+		}
+
+		if (firstNode == NULL && thisNode != NULL) {
+			firstNode = thisNode;
+		}
+	}
+
+	thisNode->next = NULL;
+	firstNode->prev = NULL;
+
+	printf("\n\n--- %i ---\n", nodeCnt); // Print number of collected nodes
+
+	return firstNode;
+}
+
 static Node* ParseExpression(Token* tokens, int* i, Node* prevNode) {
 	Node* newNode = malloc(sizeof(Node));
 	Node* left = malloc(sizeof(Node));
@@ -190,7 +327,7 @@ Node* ParseTokens(Token* tokens, int token_cnt) {
 	Node* firstNode = NULL;
 	Node* thisNode = NULL;
 
-	int nodeCnt = 0;
+	int* nodeCnt = 0;
 
 	for (int i = 0; i < token_cnt; ++i) {
 		Node* newNode = NULL;
@@ -291,13 +428,13 @@ Node* ParseTokens(Token* tokens, int token_cnt) {
 		if (newNode != NULL) {
 			if (thisNode == NULL) {
 				thisNode = newNode;
-				++nodeCnt;
+				++*nodeCnt;
 			}
 			else {
 				thisNode->next = newNode;
 				newNode->prev = thisNode;
 				thisNode = newNode;
-				++nodeCnt;
+				++*nodeCnt;
 			}
 
 			if (newNode->type == NODE_VARIABLE || newNode->type == NODE_FUNCTION || newNode->type == NODE_FUNCTION_CALL) {
@@ -315,8 +452,9 @@ Node* ParseTokens(Token* tokens, int token_cnt) {
 
 	thisNode->next = NULL;
 	firstNode->prev = NULL;
+	firstNode->nodeCnt = nodeCnt;
 
-	printf("\n\n--- %i ---\n", nodeCnt); // Print number of collected nodes
+	printf("\n\n--- %i ---\n", *nodeCnt); // Print number of collected nodes
 
 	return firstNode;
 }

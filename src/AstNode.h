@@ -28,6 +28,7 @@ struct Node {
 
     struct Node** funArgs;
     struct Node** nodes;
+    struct int* nodeCnt;
 
     struct Node* next;
     struct Node* prev;
