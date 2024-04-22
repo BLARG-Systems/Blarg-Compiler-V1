@@ -28,7 +28,7 @@ struct Node {
 
     struct Node** funArgs;
     struct Node** nodes;
-    struct int* nodeCnt;
+    int nodeCnt;
 
     struct Node* next;
     struct Node* prev;

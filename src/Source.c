@@ -7,8 +7,6 @@
 #include <stdbool.h>
 #include <string.h>
 
-// cl src\Source.c /Fe:blargify.exe
-
 #define BUFSIZE 32
 
 int filelen;
